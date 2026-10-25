@@ -6,7 +6,7 @@ Status values: `not started`, `in progress`, `implemented`, `validated locally`.
 
 | Phase | Name | Status |
 |---|---|---|
-| 1 | Runtime skeleton | not started |
+| 1 | Runtime skeleton | in progress |
 | 2 | Persistence and demo data | not started |
 | 3 | Identity and request guards | not started |
 | 4 | Support API | not started |
