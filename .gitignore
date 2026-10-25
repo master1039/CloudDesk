@@ -38,6 +38,23 @@ htmlcov/
 *.log
 *.sqlite
 *.sqlite3
+*.db
+data/
+
+# Terraform local state and plans
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+*.tfvars.json
+backend.hcl
+tfplan
+.terraform/
+
+# Local credentials
+credentials.json
+service-account*.json
+*.pem
+*.key
 
 # Editors and IDEs
 .idea/
