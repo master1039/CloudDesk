@@ -1,122 +1,276 @@
-# TASKS.md — CloudDesk implementation tracker
+# CloudDesk Support — Task tracker
 
-Execution tracker derived from `PLAN_PHASE.md`. `CLAUDE.md` wins if any row drifts. Work from `development`; one row maps to one `feature/<name>` branch and one pull request. Do not mark a task complete from intention.
+> Concise checklist for GitHub-visible progress.
+> Full plan: `PLAN.md` · Phase exit criteria: `PLAN_PHASE.md` · Spec: `CLAUDE.md`
 
-Status values: `not started`, `in progress`, `implemented`, `validated locally`, `blocked`.
+**Branch convention:** `feature/<repo-name>` (one feature branch per sub-task; open the PR against `development`)
+**Status:** `Pending ❌` · `Completed ✅`
+
+Sub-tasks in the same phase that do not share files can be open at the same time. Do not stack a branch on another feature branch. Merge the listed predecessor first when a row names one.
+
+`PLAN_PHASE.md` is still the exit-criteria spec. This file is the execution order, arranged so a phase waits only on the contract it uses.
+
+---
 
 ## Phase 1 — Runtime skeleton
 
-| ID | Task | Branch | Depends on | Requirements | Status |
-|---|---|---|---|---|---|
-| P1-1 | Settings, JSON logging, database bootstrap, and package layout | `feature/backend-config-logging` | — | F14 | not started |
-| P1-2 | FastAPI lifespan, health routes, and request-ID middleware | `feature/backend-health-request-id` | P1-1 | N3 | not started |
-| P1-3 | Offline pytest harness, `.env.example`, Make targets, and runtime checks | `feature/offline-test-harness` | P1-1, P1-2 | F14 | not started |
+> Depends on: nothing. Unblocks: every later phase.
+> Merge order: P1-1 first. P1-2 and P1-4 in parallel after it. P1-3 after P1-2.
+
+| Task | Branch | Status |
+|------|--------|--------|
+| P1-1 · Settings and JSON logging | `feature/backend-config-logging` | Pending ❌ |
+| P1-2 · Health routes and request-id middleware | `feature/backend-health-request-id` | Pending ❌ |
+| P1-3 · Offline pytest harness | `feature/test-harness-offline` | Pending ❌ |
+| P1-4 · Makefile and `.env.example` | `feature/makefile-env-example` | Pending ❌ |
+
+---
 
 ## Phase 2 — Persistence and demo data
 
-| ID | Task | Branch | Depends on | Requirements | Status |
-|---|---|---|---|---|---|
-| P2-1 | SQLAlchemy entities and shared domain constants | `feature/sqlalchemy-entities` | P1-3 | F1, F4 | not started |
-| P2-2 | PostgreSQL schema, RLS policies, seed SQL, and migration baseline | `feature/database-schema-rls` | P2-1 | F1, F4 | not started |
-| P2-3 | Demo JSON/knowledge data and idempotent SQLite bootstrap | `feature/demo-data-bootstrap` | P2-1, P2-2 | F1, F4 | not started |
+> Depends on: P1-1. Unblocks: Phases 3, 4, 5, 6, and 8.
+> Merge order: P2-1 first. P2-2 and P2-3 in parallel after it. P2-4 after P2-3.
+
+| Task | Branch | Status |
+|------|--------|--------|
+| P2-1 · SQLAlchemy entities and category enum | `feature/sqlalchemy-entities` | Pending ❌ |
+| P2-2 · Postgres schema, RLS, and migrations | `feature/postgres-schema-rls` | Pending ❌ |
+| P2-3 · Repository layer | `feature/repository-layer` | Pending ❌ |
+| P2-4 · Sample data and demo bootstrap | `feature/sample-data-bootstrap` | Pending ❌ |
+
+---
 
 ## Phase 3 — Identity and request guards
 
-| ID | Task | Branch | Depends on | Requirements | Status |
-|---|---|---|---|---|---|
-| P3-1 | Supabase-compatible JWT authentication and demo tokens | `feature/jwt-auth-rbac` | P2-3 | N1 | not started |
-| P3-2 | Role hierarchy and route dependencies | `feature/role-enforcement` | P3-1 | N1 | not started |
-| P3-3 | Redis rate limiting, audit middleware, and middleware-order tests | `feature/request-guards-audit` | P3-1, P3-2 | N2, N6 | not started |
+> Depends on: P1-2 and P2-1. Unblocks: protected routes in Phase 4 and Phase 12.
+> Merge order: P3-1 and P3-3 in parallel. P3-2 after P3-1. P3-4 last (it owns middleware order).
+
+| Task | Branch | Status |
+|------|--------|--------|
+| P3-1 · JWT and `require_role` | `feature/jwt-rbac` | Pending ❌ |
+| P3-2 · Demo auth routes and tokens | `feature/auth-demo-tokens` | Pending ❌ |
+| P3-3 · Redis rate limit | `feature/rate-limit-redis` | Pending ❌ |
+| P3-4 · Audit middleware and middleware order | `feature/audit-middleware` | Pending ❌ |
+
+---
 
 ## Phase 4 — Support API
 
-| ID | Task | Branch | Depends on | Requirements | Status |
-|---|---|---|---|---|---|
-| P4-1 | Repository/service layer for tickets and customer context | `feature/support-repositories-services` | P3-3 | F1, F4 | not started |
-| P4-2 | Ticket create/list/detail API and schemas | `feature/api-tickets` | P4-1 | F1 | not started |
-| P4-3 | Customer, subscription, workspace, and history API | `feature/api-customer-context` | P4-1 | F4 | not started |
+> Depends on: P2-3 and P3-1. Unblocks: Phase 12. Does not block Phases 5, 6, or 7.
+> Merge order: P4-1 first, so ticket and customer work share a written contract. P4-2 and P4-3 in parallel after it.
+
+| Task | Branch | Status |
+|------|--------|--------|
+| P4-1 · Ticket and customer API contract | `feature/api-contract-docs` | Pending ❌ |
+| P4-2 · Ticket API | `feature/api-tickets` | Pending ❌ |
+| P4-3 · Customer API | `feature/api-customers` | Pending ❌ |
+
+---
 
 ## Phase 5 — Knowledge pipeline
 
-| ID | Task | Branch | Depends on | Requirements | Status |
-|---|---|---|---|---|---|
-| P5-1 | Article loader and heading-aware 900/150 chunking | `feature/rag-ingest-chunking` | P2-3 | F5 | not started |
-| P5-2 | In-memory/Qdrant vector-store protocol and BM25 index | `feature/rag-vector-stores` | P5-1 | F5 | not started |
-| P5-3 | Hybrid retrieval, RRF, rerank, cache, and filters | `feature/rag-hybrid-retriever` | P5-2 | F5, F6 | not started |
-| P5-4 | Knowledge search and admin reindex API | `feature/api-knowledge-reindex` | P3-3, P5-3 | F5 | not started |
+> Depends on: P2-4. Parallel with: Phases 4, 6, 7, and 12.
+> Merge order: P5-1, then P5-2, then P5-3, then P5-4. This phase is a pipeline; the surrounding phases are not.
 
-## Phase 6 — Tools and policy
+| Task | Branch | Status |
+|------|--------|--------|
+| P5-1 · Knowledge articles and chunking | `feature/rag-chunking` | Pending ❌ |
+| P5-2 · Vector store and fake embeddings | `feature/rag-vector-store` | Pending ❌ |
+| P5-3 · Hybrid retriever | `feature/rag-hybrid-retriever` | Pending ❌ |
+| P5-4 · Ingest command and knowledge API | `feature/rag-ingest-api` | Pending ❌ |
 
-| ID | Task | Branch | Depends on | Requirements | Status |
-|---|---|---|---|---|---|
-| P6-1 | Tool policy, registry, timeout, and `ToolResult` behavior | `feature/tool-registry-policy` | P3-3, P4-1 | F9 | not started |
-| P6-2 | Read and write tools through repository/service boundaries | `feature/support-tools` | P6-1 | F9 | not started |
-| P6-3 | Integration protocols, mocks, and factory | `feature/mock-integrations` | P6-1 | F9, F14 | not started |
+---
+
+## Phase 6 — Tools and mocks
+
+> Depends on: P2-3. Parallel with: Phases 4, 5, 7, and 12.
+> Merge order: P6-1 and P6-4 in parallel. P6-2 and P6-3 in parallel after both.
+
+| Task | Branch | Status |
+|------|--------|--------|
+| P6-1 · Tool registry and policy | `feature/tool-registry-policy` | Pending ❌ |
+| P6-2 · Read-only support tools | `feature/tools-read-only` | Pending ❌ |
+| P6-3 · Approval-gated write tools | `feature/tools-approval-gated` | Pending ❌ |
+| P6-4 · Mock integrations | `feature/integrations-mock` | Pending ❌ |
+
+---
 
 ## Phase 7 — Rules and guardrails
 
-| ID | Task | Branch | Depends on | Requirements | Status |
-|---|---|---|---|---|---|
-| P7-1 | Category, severity, escalation, and risk rules | `feature/deterministic-support-rules` | P2-3 | F3, F10 | not started |
-| P7-2 | Injection scanning, untrusted wrapping, and security preamble | `feature/prompt-injection-guards` | P7-1 | N4 | not started |
-| P7-3 | Customer-output validation and secret scrubbing | `feature/output-memory-guards` | P7-2 | N5, N7 | not started |
+> Depends on: P2-1. Parallel with: Phases 4, 5, 6, and 12.
+> Merge order: all four branches can be open together. They live in separate modules.
 
-## Phase 8 — Specialist agents
+| Task | Branch | Status |
+|------|--------|--------|
+| P7-1 · Escalation and severity rules | `feature/policy-rules` | Pending ❌ |
+| P7-2 · Injection wrapping and security preamble | `feature/guardrail-injection` | Pending ❌ |
+| P7-3 · Customer output validation | `feature/guardrail-output-validation` | Pending ❌ |
+| P7-4 · Secret scrub | `feature/guardrail-secret-scrub` | Pending ❌ |
 
-| ID | Task | Branch | Depends on | Requirements | Status |
-|---|---|---|---|---|---|
-| P8-1 | LLM provider abstraction, fake provider, and structured-call telemetry | `feature/structured-llm-provider` | P1-3, P7-3 | F14 | not started |
-| P8-2 | Workflow schemas plus supervisor and customer agents | `feature/supervisor-customer-agents` | P4-3, P8-1 | F2, F3, F4 | not started |
-| P8-3 | Knowledge and troubleshooting agents | `feature/knowledge-troubleshooting-agents` | P5-3, P8-1 | F5, F6, F7 | not started |
-| P8-4 | Resolution and escalation agents with deterministic actions | `feature/resolution-escalation-agents` | P6-3, P7-3, P8-1 | F8, F9, F10 | not started |
+---
 
-## Phase 9 — Workflow graph and trace
+## Phase 8 — Memory
 
-| ID | Task | Branch | Depends on | Requirements | Status |
-|---|---|---|---|---|---|
-| P9-1 | Support state, reducers, nodes, graph constants, and routing | `feature/langgraph-workflow` | P8-2, P8-3, P8-4 | F11 | not started |
-| P9-2 | In-memory/SQLite checkpointer and workflow service | `feature/workflow-persistence` | P9-1 | F11 | not started |
-| P9-3 | Workflow tracer, run/poll/events API, and low-risk end-to-end test | `feature/workflow-observability` | P9-2 | F13 | not started |
+> Depends on: P2-3 and P7-4. Parallel with: Phase 12. Does not wait for the graph.
+> Merge order: P8-1 and P8-2 in parallel. P8-3 after both.
 
-## Phase 10 — Approval and escalation
+| Task | Branch | Status |
+|------|--------|--------|
+| P8-1 · Short-term Redis facade | `feature/memory-short-term` | Pending ❌ |
+| P8-2 · Long-term customer memory | `feature/memory-long-term` | Pending ❌ |
+| P8-3 · Recall and record service | `feature/memory-service` | Pending ❌ |
 
-| ID | Task | Branch | Depends on | Requirements | Status |
-|---|---|---|---|---|---|
-| P10-1 | Human-approval interrupt, request persistence, and resume service | `feature/workflow-human-approval` | P9-3 | F9 | not started |
-| P10-2 | Approve/reject routes, idempotent execution, and 409 behavior | `feature/api-approval-decisions` | P10-1 | F9 | not started |
-| P10-3 | Policy escalation path and CD-1002/CD-1005/CD-1013 end-to-end tests | `feature/workflow-escalation-safety` | P10-2 | F9, F10, N4 | not started |
+---
 
-## Phase 11 — Memory
+## Phase 9 — Specialist agents
 
-| ID | Task | Branch | Depends on | Requirements | Status |
-|---|---|---|---|---|---|
-| P11-1 | Short-term Redis/fakeredis conversation, state, and retrieval cache | `feature/short-term-memory` | P5-3, P9-3 | F4 | not started |
-| P11-2 | Long-term customer-memory repository and scrubbed deduplication | `feature/long-term-memory` | P7-3, P11-1 | F11, N7 | not started |
-| P11-3 | Recall and memory-update workflow integration | `feature/workflow-memory` | P10-3, P11-2 | F4, F11 | not started |
+> Depends on: Phases 5, 6, 7, and 8. Parallel with: nothing required inside the phase after P9-1.
+> Merge order: P9-1 first. P9-2 through P9-8 in parallel after it. Each agent branch carries its own test.
 
-## Phase 12 — Agent console
+| Task | Branch | Status |
+|------|--------|--------|
+| P9-1 · Workflow schemas and fake LLM | `feature/workflow-schemas-fake-llm` | Pending ❌ |
+| P9-2 · Supervisor agent | `feature/agent-supervisor` | Pending ❌ |
+| P9-3 · Customer agent | `feature/agent-customer` | Pending ❌ |
+| P9-4 · Knowledge agent | `feature/agent-knowledge` | Pending ❌ |
+| P9-5 · Troubleshooting agent | `feature/agent-troubleshooting` | Pending ❌ |
+| P9-6 · Resolution agent | `feature/agent-resolution` | Pending ❌ |
+| P9-7 · Escalation agent | `feature/agent-escalation` | Pending ❌ |
+| P9-8 · Eval case dataset | `feature/agent-eval-cases` | Pending ❌ |
 
-| ID | Task | Branch | Depends on | Requirements | Status |
-|---|---|---|---|---|---|
-| P12-1 | Next.js shell, authentication, typed API client, and shared UI kit | `feature/frontend-foundation` | P4-3, P9-3 | F12 | not started |
-| P12-2 | Dashboard, ticket/customer lists, knowledge, escalation, agents, audit, and settings pages | `feature/frontend-console-pages` | P12-1 | F12 | not started |
-| P12-3 | Three-column ticket workflow, approval, reply, request-info, and role-aware controls | `feature/frontend-ticket-actions` | P10-3, P11-3, P12-2 | F12 | not started |
-| P12-4 | Frontend component/API tests and browser acceptance pass | `feature/frontend-acceptance` | P12-3 | F12 | not started |
+---
 
-## Phase 13 — Evaluation and delivery
+## Phase 10 — Workflow graph and trace
 
-| ID | Task | Branch | Depends on | Requirements | Status |
-|---|---|---|---|---|---|
-| P13-1 | Evaluation dataset, metrics, and threshold tests | `feature/evaluation-quality-gates` | P10-3, P11-3 | F2, F5, F8, F10 | not started |
-| P13-2 | Backend/frontend containers, Compose, health checks, and smoke test | `feature/container-delivery` | P12-4, P13-1 | N8 | not started |
-| P13-3 | AWS/Azure/GCP Terraform roots, Kubernetes, and safe deployment scripts | `feature/multicloud-infrastructure` | P13-2 | N8 | not started |
-| P13-4 | Test, security, image, Terraform, and reviewed deploy workflows | `feature/github-actions-delivery` | P13-2, P13-3 | N8 | not started |
-| P13-5 | Final offline validation, demos, traceability, and honest-status update | `feature/final-validation` | P13-1, P13-2, P13-3, P13-4 | F1–F14, N1–N8 | not started |
+> Depends on: Phase 9. Unblocks: Phase 11.
+> Merge order: P10-1 first. P10-2, P10-3, P10-4, and P10-6 in parallel. P10-5 last (it wires the nodes).
 
-## Tracker update rules
+| Task | Branch | Status |
+|------|--------|--------|
+| P10-1 · Support state and checkpointer | `feature/graph-state-checkpointer` | Pending ❌ |
+| P10-2 · Supervisor graph nodes | `feature/graph-nodes-supervisor` | Pending ❌ |
+| P10-3 · Investigate graph nodes | `feature/graph-nodes-investigate` | Pending ❌ |
+| P10-4 · Resolution and risk nodes | `feature/graph-nodes-resolution` | Pending ❌ |
+| P10-5 · Graph wiring and run API | `feature/graph-run-api` | Pending ❌ |
+| P10-6 · Workflow tracer and events API | `feature/workflow-tracer-events` | Pending ❌ |
 
-- `implemented` means the row's code and tests exist; it does not mean they passed.
-- `validated locally` requires the row's tests and current phase checkpoint to pass on this machine.
-- A phase is updated in `PLAN_PHASE.md` only when its exit criteria are satisfied.
-- Update `MEMORY.md` whenever implementation, local validation, credentials, CI execution, or deployment state changes.
-- A merge to `main` is not a deployment.
+---
+
+## Phase 11 — Approval and escalation
+
+> Depends on: P6-3 and Phase 10. Unblocks: the ticket action screen and `make demo`.
+> Merge order: P11-1 and P11-3 in parallel. P11-2 after P11-1. P11-4 after P11-1 and P11-3. P11-5 last.
+
+| Task | Branch | Status |
+|------|--------|--------|
+| P11-1 · Human approval interrupt | `feature/workflow-human-approval` | Pending ❌ |
+| P11-2 · Approval decide and resume API | `feature/api-approvals-resume` | Pending ❌ |
+| P11-3 · Escalation routing | `feature/workflow-escalation-routing` | Pending ❌ |
+| P11-4 · Execute resolution on the shared tool path | `feature/workflow-execute-resolution` | Pending ❌ |
+| P11-5 · Demo script for CD-1002 and CD-1005 | `feature/demo-approval-escalation` | Pending ❌ |
+
+---
+
+## Phase 12 — Console shell
+
+> Depends on: P4-1 and P3-2. Parallel with: Phases 5 through 11.
+> Merge order: P12-1 and P12-2 in parallel. P12-3 after both. P12-4 after P12-3.
+
+| Task | Branch | Status |
+|------|--------|--------|
+| P12-1 · Next.js app shell and navigation | `feature/frontend-app-shell` | Pending ❌ |
+| P12-2 · Typed API client | `feature/frontend-api-client` | Pending ❌ |
+| P12-3 · Login and role-aware layout | `feature/frontend-auth-layout` | Pending ❌ |
+| P12-4 · Read-only list pages | `feature/frontend-read-pages` | Pending ❌ |
+
+---
+
+## Phase 13 — Ticket workflow screen
+
+> Depends on: Phase 11 and Phase 12. This is the only UI phase that waits on the graph.
+> Merge order: P13-1 first. P13-2 and P13-3 in parallel after it. P13-4 after both.
+
+| Task | Branch | Status |
+|------|--------|--------|
+| P13-1 · Ticket detail layout | `feature/frontend-ticket-layout` | Pending ❌ |
+| P13-2 · Workflow steps and polling | `feature/frontend-workflow-panel` | Pending ❌ |
+| P13-3 · Approve, reject, reply, and escalate actions | `feature/frontend-ticket-actions` | Pending ❌ |
+| P13-4 · Frontend unit tests | `feature/frontend-unit-tests` | Pending ❌ |
+
+---
+
+## Phase 14 — Evaluation and delivery
+
+> Depends on: Phase 11 for the eval suite and the demo. Image and Terraform files do not import the graph.
+> Merge order: P14-1 after Phase 11. P14-2, P14-3, and P14-4 in parallel once the app boots. P14-5 after P14-2 and P14-3.
+
+| Task | Branch | Status |
+|------|--------|--------|
+| P14-1 · Evaluation thresholds | `feature/eval-thresholds` | Pending ❌ |
+| P14-2 · Backend and frontend Dockerfiles | `feature/docker-images` | Pending ❌ |
+| P14-3 · Compose stack | `feature/docker-compose` | Pending ❌ |
+| P14-4 · Terraform and CI scaffolds | `feature/delivery-terraform-ci` | Pending ❌ |
+| P14-5 · Deployment hygiene tests | `feature/deployment-hygiene-tests` | Pending ❌ |
+
+---
+
+## Dependency overview
+
+```text
+P1 Runtime
+  └─► P2 Data
+        ├─► P3 Identity ─► P4 Support API ─► P12 Console shell ─┐
+        ├─► P5 Knowledge ─────────────────────────────────────┐ │
+        ├─► P6 Tools ─────────────────────────────────────────┤ │
+        └─► P7 Guardrails ─► P8 Memory ───────────────────────┤ │
+                              │                               │ │
+                              └─► P9 Specialists ◄────────────┘ │
+                                    └─► P10 Graph                │
+                                          └─► P11 Approval       │
+                                                └─► P13 Ticket UI ◄┘
+                                                      └─► P14 Eval and delivery
+```
+
+Phases 4, 5, 6, and 7 start together once Phase 2 (and Phase 3, for Phase 4 only) has merged. Phase 12 starts when the API contract exists and does not wait for agents. Phase 13 is the join of the console shell and the approval workflow.
+
+---
+
+## Map to `PLAN_PHASE.md`
+
+| This file | Spec phase in `PLAN_PHASE.md` |
+|-----------|-------------------------------|
+| Phase 1 | Phase 1 Runtime skeleton |
+| Phase 2 | Phase 2 Persistence and demo data |
+| Phase 3 | Phase 3 Identity and request guards |
+| Phase 4 | Phase 4 Support API |
+| Phase 5 | Phase 5 Knowledge pipeline |
+| Phase 6 | Phase 6 Tools and policy |
+| Phase 7 | Phase 7 Rules and guardrails |
+| Phase 8 | Phase 11 Memory (pulled forward of the graph) |
+| Phase 9 | Phase 8 Specialist agents |
+| Phase 10 | Phase 9 Workflow graph and trace |
+| Phase 11 | Phase 10 Approval and escalation |
+| Phases 12 and 13 | Phase 12 Agent console |
+| Phase 14 | Phase 13 Evaluation and delivery |
+
+---
+
+## Progress summary
+
+| Phase | Name | Tasks | Completed |
+|-------|------|-------|-----------|
+| 1 | Runtime skeleton | 4 | 0 |
+| 2 | Persistence and demo data | 4 | 0 |
+| 3 | Identity and request guards | 4 | 0 |
+| 4 | Support API | 3 | 0 |
+| 5 | Knowledge pipeline | 4 | 0 |
+| 6 | Tools and mocks | 4 | 0 |
+| 7 | Rules and guardrails | 4 | 0 |
+| 8 | Memory | 3 | 0 |
+| 9 | Specialist agents | 8 | 0 |
+| 10 | Workflow graph and trace | 6 | 0 |
+| 11 | Approval and escalation | 5 | 0 |
+| 12 | Console shell | 4 | 0 |
+| 13 | Ticket workflow screen | 4 | 0 |
+| 14 | Evaluation and delivery | 5 | 0 |
+| **Total** | | **62** | **0** |
