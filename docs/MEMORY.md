@@ -127,13 +127,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-10-25 |
 |---|---|
-| Repository contents | Project guidance, the P1-1 settings/logging foundation, and the P1-2 FastAPI health/request-ID surface are in place. The full offline pytest harness, Makefile, `.env.example`, persistence, sample data, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 settings and JSON logging plus P1-2 `/health`, dependency-free `/health/live`, extensible `/health/ready`, CORS exposure, and request-ID propagation into responses and log context. Unhandled HTTP errors return the standard detail envelope with the request ID. |
-| Validated locally | P1-1/P1-2: 13 focused offline tests pass and backend/tests compile. Health payloads, generated and caller-supplied IDs, 404/500 headers, context cleanup, and CORS exposure are covered. `make test` and `make demo` do not exist yet. |
+| Repository contents | Project guidance and P1-1 through P1-3 are in place: settings/logging, FastAPI health/request-ID behavior, and the offline pytest harness. The Makefile, `.env.example`, persistence, sample data, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 settings/logging; P1-2 health routes and request-ID propagation; P1-3 pytest configuration with session-scoped async loops, enforced fake/in-memory providers, temporary SQLite paths, cached-settings isolation, sync/async app clients, and non-local network blocking. |
+| Validated locally | P1-1 through P1-3: 18 tests pass under pytest. Sync/async clients, offline settings and `.env` isolation, network blocking, health payloads, request IDs, CORS, and 404/500 behavior are covered. `make test` and `make demo` do not exist yet. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phase 1 is in progress (P1-1 and P1-2 complete; P1-3 and P1-4 pending). Phases 2–13 are not started. |
+| Phase plan | Phase 1 is in progress (P1-1 through P1-3 complete; P1-4 pending). Phases 2–13 are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
