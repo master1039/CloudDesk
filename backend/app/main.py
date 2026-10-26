@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-
 from app.api.health import router as health_router
 from app.core.config import get_settings
 from app.core.logging import setup_logging
 from app.middleware import REQUEST_ID_HEADER, RequestIdMiddleware
-
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 APP_VERSION = "0.1.0"
 

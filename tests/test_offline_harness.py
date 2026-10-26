@@ -9,9 +9,8 @@ from pathlib import Path
 
 import httpx
 import pytest
-from fastapi.testclient import TestClient
-
 from app.core.config import get_settings
+from fastapi.testclient import TestClient
 
 
 def test_f14_harness_forces_offline_settings(

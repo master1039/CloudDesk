@@ -5,11 +5,11 @@ from __future__ import annotations
 import json
 import logging
 import logging.config
+from collections.abc import Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar, Token
-from datetime import datetime, timezone
-from typing import Any, Iterator
-
+from datetime import UTC, datetime
+from typing import Any
 
 _request_id: ContextVar[str | None] = ContextVar("request_id", default=None)
 _workflow_id: ContextVar[str | None] = ContextVar("workflow_id", default=None)
@@ -33,7 +33,7 @@ class JsonFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         payload: dict[str, Any] = {
-            "timestamp": datetime.fromtimestamp(record.created, timezone.utc).isoformat(
+            "timestamp": datetime.fromtimestamp(record.created, UTC).isoformat(
                 timespec="milliseconds"
             ),
             "level": record.levelname,
@@ -56,7 +56,7 @@ class JsonFormatter(logging.Formatter):
 def setup_logging(level: str | int = "INFO") -> None:
     """Configure application and server logs as JSON without duplicate handlers."""
 
-    resolved_level = logging._checkLevel(level)  # noqa: SLF001 - stdlib's canonical validator
+    resolved_level = logging._checkLevel(level)
     config: dict[str, Any] = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -120,9 +120,7 @@ def reset_request_id(token: Token[str | None]) -> None:
 
 
 @contextmanager
-def log_context(
-    *, request_id: str | None = None, workflow_id: str | None = None
-) -> Iterator[None]:
+def log_context(*, request_id: str | None = None, workflow_id: str | None = None) -> Iterator[None]:
     """Temporarily bind correlation ids and reliably restore prior context."""
 
     request_token = set_request_id(request_id)

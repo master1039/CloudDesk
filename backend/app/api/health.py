@@ -7,7 +7,6 @@ from typing import Literal
 from fastapi import APIRouter, Request
 from pydantic import BaseModel, Field
 
-
 router = APIRouter(tags=["health"])
 
 

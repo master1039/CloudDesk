@@ -22,17 +22,22 @@ The repository is currently in the specification stage. Application code, tests,
 6. [MEMORY.md](MEMORY.md) — locked decisions and honest delivery status.
 7. [Architecture](docs/ARCHITECTURE.md) and [API contract](docs/API_CONTRACT.md).
 
-## Planned local workflow
+## Local workflow
 
-These commands become available as their phases are implemented; they do not all exist yet.
+Phase 1 provides these commands:
 
 ```powershell
 make setup
-make seed
-make ingest
 make backend
 make test
 make lint
+```
+
+The following commands are planned for later phases and do not exist yet:
+
+```powershell
+make seed
+make ingest
 make demo
 make demo TICKET=CD-1005
 ```
