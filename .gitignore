@@ -1,0 +1,67 @@
+# Byte-compiled Python and cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables and local secrets
+.env
+.env.*
+!.env.example
+
+# Packaging and build artifacts
+build/
+dist/
+wheels/
+*.egg-info/
+*.egg
+
+# Test, coverage, and type-checker caches
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# Logs and local databases
+*.log
+*.sqlite
+*.sqlite3
+*.db
+data/
+
+# Terraform local state and plans
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+*.tfvars.json
+backend.hcl
+tfplan
+.terraform/
+
+# Local credentials
+credentials.json
+service-account*.json
+*.pem
+*.key
+
+# Editors and IDEs
+.idea/
+.vscode/
+*.swp
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini

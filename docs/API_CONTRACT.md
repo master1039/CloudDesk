@@ -1,0 +1,207 @@
+# CloudDesk API contract
+
+Target HTTP contract for the v1 agent console. This document is authoritative for routes and transport types once implementation begins; `CLAUDE.md` remains authoritative for product behavior and policy. Current implementation status is tracked in `MEMORY.md`.
+
+## Conventions
+
+- Base path: `/api/v1`, except health routes.
+- Content type: `application/json`.
+- Authentication: `Authorization: Bearer <JWT>` unless a route is marked public.
+- Every response includes `X-Request-ID`; callers may provide one.
+- IDs are UUID strings unless a display ID such as `CD-1002` is explicitly named.
+- Timestamps are UTC ISO 8601 strings.
+- Errors use `{ "detail": string }`.
+- List responses use `{ "items": T[], "total": integer, "limit": integer, "offset": integer }`.
+- Unknown resources return 404; invalid input returns 422; insufficient role returns 403.
+- A second run while a ticket waits for approval returns 409. Resuming a non-paused run returns 409.
+
+Roles: `viewer` can read; `agent` can run workflows and act on tickets/approvals; `admin` additionally manages knowledge indexing and settings.
+
+## Shared enums
+
+```text
+Role = viewer | agent | admin
+TicketCategory = login_issue | billing | api_failure | workspace_permissions |
+                 storage_quota | integration | feature_request | account | security | other
+TicketStatus = new | in_progress | waiting_on_customer | waiting_on_approval |
+               escalated | resolved | closed
+Severity = low | medium | high | critical
+Channel = email | chat | web | api
+WorkflowStatus = queued | running | waiting_on_approval | completed | failed
+ApprovalStatus = pending | approved | rejected
+```
+
+## Health
+
+| Method | Path | Auth | Response |
+|---|---|---|---|
+| GET | `/health` | public | `200 HealthResponse` |
+| GET | `/health/live` | public | `200 {"status":"ok"}` with no dependency I/O |
+| GET | `/health/ready` | public | `200` when dependencies are ready; `503` otherwise |
+
+`HealthResponse`: `status`, `version`, and optional dependency status map.
+
+## Authentication
+
+| Method | Path | Role | Request | Response |
+|---|---|---|---|---|
+| POST | `/api/v1/auth/login` | public | `LoginRequest` | `200 AuthResponse` |
+| GET | `/api/v1/auth/me` | viewer | — | `200 Profile` |
+
+`LoginRequest`: `email`, `password`. In demo mode this authenticates only configured demo users.
+
+`AuthResponse`: `access_token`, `token_type: "bearer"`, `expires_in`, `user: Profile`.
+
+`Profile`: `id`, `email`, `display_name`, `role`.
+
+## Dashboard
+
+| Method | Path | Role | Response |
+|---|---|---|---|
+| GET | `/api/v1/dashboard/summary` | viewer | `200 DashboardSummary` |
+
+`DashboardSummary`: ticket counts by status and severity, pending approval count, open escalation count, median time-to-first-response, and recent ticket summaries. Metrics are observations, not hard-coded targets.
+
+## Tickets
+
+| Method | Path | Role | Result |
+|---|---|---|---|
+| GET | `/api/v1/tickets` | viewer | Paginated `TicketSummary` list |
+| POST | `/api/v1/tickets` | agent | `201 TicketDetail` |
+| GET | `/api/v1/tickets/{ticket_id}` | viewer | `200 TicketDetail` |
+| POST | `/api/v1/tickets/{ticket_id}/run` | agent | `202 {"workflow_id": string}` |
+| GET | `/api/v1/tickets/{ticket_id}/workflow` | viewer | `200 WorkflowView` |
+| GET | `/api/v1/tickets/{ticket_id}/events` | viewer | Paginated `WorkflowEvent` list |
+| POST | `/api/v1/tickets/{ticket_id}/reply` | agent | `200 TicketMessage` |
+| POST | `/api/v1/tickets/{ticket_id}/request-info` | agent | `200 TicketMessage` |
+| POST | `/api/v1/tickets/{ticket_id}/escalate` | agent | `201 Escalation` |
+
+List filters: `status`, `severity`, `category`, `channel`, `customer_id`, `search`, `limit`, `offset`.
+
+`CreateTicketRequest`:
+
+```json
+{
+  "customer_id": "uuid",
+  "subject": "Unable to sign in",
+  "body": "Customer-provided text",
+  "channel": "email"
+}
+```
+
+`TicketSummary`: `id`, `display_id`, `subject`, `customer_id`, `customer_name`, `channel`, `status`, nullable `category`, nullable `severity`, nullable `summary`, `created_at`, `updated_at`.
+
+`TicketDetail` extends `TicketSummary` with `body`, `messages`, nullable `workflow`, nullable `approval`, nullable `escalation`, and customer context links. Ticket text is untrusted data.
+
+`TicketMessage`: `id`, `ticket_id`, `direction` (`inbound|outbound|internal`), `author`, `body`, `created_at`.
+
+`ReplyRequest`: `body`. The server validates output before recording an outbound message.
+
+`RequestInfoRequest`: `body`, containing the approved question to send through the mock integration.
+
+`EscalateTicketRequest`: `team`, `reason`, optional `priority`.
+
+## Workflow view
+
+`WorkflowView` contains:
+
+- `id`, `ticket_id`, `status`, `current_node`, `completed_nodes`, `started_at`, `updated_at`, nullable `completed_at`.
+- nullable `classification`, `severity_assessment`, `customer_context`, `evidence`, `previous_cases`, `diagnosis`, `resolution_plan`, `risk`, `escalation`, and `approval`.
+- `token_usage`, `estimated_cost`, and scrubbed `errors`.
+
+`Evidence`: `id`, `title`, `source`, `snippet`, `score`, `url`, `article_id`.
+
+`Diagnosis`: `probable_causes`, numbered `steps`, `confidence`, and optional service-status context.
+
+`ResolutionPlan`: `summary`, `customer_reply`, `internal_notes`, and deterministic `actions`.
+
+`PlannedAction`: `tool`, `arguments`, `requires_approval`, `reason`, and current execution status. Arguments exposed to the UI must be scrubbed.
+
+`WorkflowEvent`: `id`, `workflow_id`, `event_type`, `node`, `duration_ms`, `token_usage`, `estimated_cost`, scrubbed `input_summary`, scrubbed `output_summary`, `created_at`. It never includes raw prompts or hidden reasoning.
+
+## Approvals
+
+| Method | Path | Role | Request | Result |
+|---|---|---|---|---|
+| GET | `/api/v1/approvals` | viewer | — | Paginated `ApprovalRequest` list |
+| GET | `/api/v1/approvals/{approval_id}` | viewer | — | `200 ApprovalRequest` |
+| POST | `/api/v1/approvals/{approval_id}/approve` | agent | `ApprovalDecisionRequest` | `202 ApprovalRequest` |
+| POST | `/api/v1/approvals/{approval_id}/reject` | agent | `ApprovalDecisionRequest` | `202 ApprovalRequest` |
+
+`ApprovalRequest`: `id`, `ticket_id`, `workflow_id`, `action`, scrubbed `arguments`, `reason`, `status`, `requested_at`, nullable `decided_at`, nullable `decided_by`, nullable `decision_note`.
+
+`ApprovalDecisionRequest`: optional `note`. Decisions are idempotent; a conflicting second decision returns 409.
+
+## Customers
+
+| Method | Path | Role | Result |
+|---|---|---|---|
+| GET | `/api/v1/customers` | viewer | Paginated `CustomerSummary` list |
+| GET | `/api/v1/customers/{customer_id}` | viewer | `200 CustomerDetail` |
+
+`CustomerSummary`: `id`, `name`, `email`, `plan`, `workspace_id`, `created_at`.
+
+`CustomerDetail` extends it with subscription, workspace, previous tickets, and up to 10 scrubbed memory notes.
+
+## Knowledge
+
+| Method | Path | Role | Request/Query | Result |
+|---|---|---|---|---|
+| GET | `/api/v1/knowledge` | viewer | pagination/category/search | Article summaries |
+| GET | `/api/v1/knowledge/{article_id}` | viewer | — | `200 KnowledgeArticle` |
+| POST | `/api/v1/knowledge/search` | viewer | `KnowledgeSearchRequest` | `200 {"items": Evidence[]}` |
+| POST | `/api/v1/knowledge/reindex` | admin | optional provider/model override | `202 ReindexJob` |
+
+`KnowledgeSearchRequest`: `query`, optional `category`, `mode` (`hybrid|semantic|keyword`, default `hybrid`), and `top_k`.
+
+`KnowledgeArticle`: `id`, `slug`, `title`, `category`, `tags`, `summary`, `body`, `updated_at`.
+
+`ReindexJob`: `id`, `status`, `collection`, `created_at`. Reindex recreates the selected collection.
+
+## Escalations
+
+| Method | Path | Role | Result |
+|---|---|---|---|
+| GET | `/api/v1/escalations` | viewer | Paginated `Escalation` list |
+| GET | `/api/v1/escalations/{escalation_id}` | viewer | `200 Escalation` |
+
+`Escalation`: `id`, `ticket_id`, `workflow_id`, `team`, `reason`, `policy_rules`, `status`, `created_at`, nullable `resolved_at`.
+
+## Agent graph
+
+| Method | Path | Role | Result |
+|---|---|---|---|
+| GET | `/api/v1/agents` | viewer | `200 AgentGraph` |
+
+`AgentGraph`: `nodes` from `GRAPH_NODES`, `edges` from `GRAPH_EDGES`, and specialist metadata safe for operators. It does not expose prompts.
+
+## Audit
+
+| Method | Path | Role | Result |
+|---|---|---|---|
+| GET | `/api/v1/audit` | viewer | Paginated `AuditEntry` list |
+
+Filters: `actor_id`, `method`, `path`, `request_id`, `from`, `to`, `limit`, `offset`.
+
+`AuditEntry`: `id`, `actor_id`, `actor_role`, `method`, `path`, `status_code`, `request_id`, scrubbed `change_summary`, `created_at`.
+
+## Settings
+
+| Method | Path | Role | Result |
+|---|---|---|---|
+| GET | `/api/v1/settings` | admin | `200 PublicSettings` |
+| PATCH | `/api/v1/settings` | admin | `200 PublicSettings` |
+
+Only non-secret operational settings may be returned or changed. Provider API keys, JWT secrets, service-role keys, database credentials, and cloud credentials are never represented in this API.
+
+## MCP tools
+
+| Method | Path | Role | Result |
+|---|---|---|---|
+| GET | `/api/v1/mcp/tools` | viewer | Read-only tool descriptors |
+
+The v1 MCP surface exposes read-only tools only. Descriptors include name, description, and JSON schema; execution still follows the same authorization and registry policy.
+
+## Contract-change rule
+
+Every implemented contract change updates this file, `backend/app/schemas/`, and `frontend/lib/types.ts` in the same change. Add tests for status code, role enforcement, input validation, response shape, and relevant requirement IDs.
