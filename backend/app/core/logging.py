@@ -113,6 +113,12 @@ def set_workflow_id(value: str | None) -> Token[str | None]:
     return _workflow_id.set(value)
 
 
+def reset_request_id(token: Token[str | None]) -> None:
+    """Restore the request id context captured by ``set_request_id``."""
+
+    _request_id.reset(token)
+
+
 @contextmanager
 def log_context(
     *, request_id: str | None = None, workflow_id: str | None = None

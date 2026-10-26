@@ -39,7 +39,13 @@ ApprovalStatus = pending | approved | rejected
 | GET | `/health/live` | public | `200 {"status":"ok"}` with no dependency I/O |
 | GET | `/health/ready` | public | `200` when dependencies are ready; `503` otherwise |
 
-`HealthResponse`: `status`, `version`, and optional dependency status map.
+`GET /health` returns `HealthResponse`: `status: "ok"` and `version`.
+
+`GET /health/live` returns only `{ "status": "ok" }` and performs no dependency I/O.
+
+`GET /health/ready` returns `status`, `version`, and `dependencies`, a string map populated as
+database, Redis, vector-store, and LLM readiness checks are introduced. It is empty during the
+runtime-skeleton phase.
 
 ## Authentication
 

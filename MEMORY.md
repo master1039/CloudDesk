@@ -127,13 +127,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-10-25 |
 |---|---|
-| Repository contents | Project guidance is in place. P1-1 adds the backend package skeleton, environment-backed settings, JSON logging, and focused unit tests. Health routes, middleware, the full test harness, sample data, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 settings and JSON logging: cached immutable settings cover every variable in `CLAUDE.md` §10.1, secrets use `SecretStr`, and JSON logs always include `request_id` and `workflow_id`. |
-| Validated locally | P1-1: 5 focused unit tests pass; backend/tests compile; the JSON logging smoke check passes. `make test` and `make demo` do not exist yet. |
+| Repository contents | Project guidance, the P1-1 settings/logging foundation, and the P1-2 FastAPI health/request-ID surface are in place. The full offline pytest harness, Makefile, `.env.example`, persistence, sample data, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 settings and JSON logging plus P1-2 `/health`, dependency-free `/health/live`, extensible `/health/ready`, CORS exposure, and request-ID propagation into responses and log context. Unhandled HTTP errors return the standard detail envelope with the request ID. |
+| Validated locally | P1-1/P1-2: 13 focused offline tests pass and backend/tests compile. Health payloads, generated and caller-supplied IDs, 404/500 headers, context cleanup, and CORS exposure are covered. `make test` and `make demo` do not exist yet. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phase 1 is in progress (P1-1 complete; P1-2 through P1-4 pending). Phases 2–13 are not started. |
+| Phase plan | Phase 1 is in progress (P1-1 and P1-2 complete; P1-3 and P1-4 pending). Phases 2–13 are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
