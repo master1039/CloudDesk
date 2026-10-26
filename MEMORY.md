@@ -127,13 +127,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-10-25 |
 |---|---|
-| Repository contents | Project guidance is in place (`CLAUDE.md`, `AGENTS.md`, `MEMORY.md`, `PLAN.md`, `PLAN_PHASE.md`, `TASKS.md`, `.cursor/skills/clouddesk-support/SKILL.md`, `docs/ARCHITECTURE.md`, and the baseline `docs/API_CONTRACT.md`). Application code, tests, sample data, containers, CI, and infrastructure are absent. |
-| Implemented | Nothing. |
-| Validated locally | Nothing. `make test` and `make demo` do not exist yet. |
+| Repository contents | Project guidance is in place. P1-1 adds the backend package skeleton, environment-backed settings, JSON logging, and focused unit tests. Health routes, middleware, the full test harness, sample data, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 settings and JSON logging: cached immutable settings cover every variable in `CLAUDE.md` §10.1, secrets use `SecretStr`, and JSON logs always include `request_id` and `workflow_id`. |
+| Validated locally | P1-1: 5 focused unit tests pass; backend/tests compile; the JSON logging smoke check passes. `make test` and `make demo` do not exist yet. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Specified in `PLAN_PHASE.md`. All 13 phases are not started. |
+| Phase plan | Phase 1 is in progress (P1-1 complete; P1-2 through P1-4 pending). Phases 2–13 are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 

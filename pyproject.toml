@@ -1,9 +1,10 @@
 [project]
 name = "clouddesk"
 version = "0.1.0"
-description = "Add your description here"
+description = "Autonomous customer support and resolution platform"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "langchain>=1.4.7",
+    "pydantic-settings>=2.7,<3",
 ]
