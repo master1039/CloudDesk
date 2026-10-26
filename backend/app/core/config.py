@@ -16,7 +16,6 @@ from typing import Annotated, Any
 from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
-
 CorsOrigins = Annotated[list[str], NoDecode]
 
 
@@ -59,7 +58,7 @@ class Settings(BaseSettings):
     qdrant_collection: str = "clouddesk_knowledge"
 
     approval_required_for_refunds: bool = True
-    max_refund_without_approval: Decimal = Field(default=Decimal("0"), ge=0)
+    max_refund_without_approval: Decimal = Field(default=Decimal(0), ge=0)
     tool_timeout_seconds: float = Field(default=30.0, gt=0)
     rate_limit_per_minute: int = Field(default=120, gt=0)
     sample_data_dir: Path = Path("sample_data")
@@ -86,7 +85,7 @@ class Settings(BaseSettings):
                 value = stripped.split(",")
 
         if not isinstance(value, (list, tuple, set)):
-            raise ValueError("CORS_ORIGINS must be a list or comma-separated string")
+            raise TypeError("CORS_ORIGINS must be a list or comma-separated string")
 
         origins = [str(origin).strip().rstrip("/") for origin in value if str(origin).strip()]
         return list(dict.fromkeys(origins))

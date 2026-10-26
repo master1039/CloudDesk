@@ -5,11 +5,10 @@ from __future__ import annotations
 import unittest
 from uuid import UUID
 
-from fastapi.testclient import TestClient
-
 from app.core.logging import get_request_id
 from app.main import APP_VERSION, create_app
 from app.middleware import REQUEST_ID_HEADER
+from fastapi.testclient import TestClient
 
 
 class HealthRouteTests(unittest.TestCase):

@@ -125,15 +125,15 @@ Cases live in `datasets/eval_cases.json` and each case needs a valid `expected_c
 
 Update each row in place. Do not mark a row done from intention.
 
-| Surface | State on 2026-10-25 |
+| Surface | State on 2026-10-26 |
 |---|---|
-| Repository contents | Project guidance and P1-1 through P1-3 are in place: settings/logging, FastAPI health/request-ID behavior, and the offline pytest harness. The Makefile, `.env.example`, persistence, sample data, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 settings/logging; P1-2 health routes and request-ID propagation; P1-3 pytest configuration with session-scoped async loops, enforced fake/in-memory providers, temporary SQLite paths, cached-settings isolation, sync/async app clients, and non-local network blocking. |
-| Validated locally | P1-1 through P1-3: 18 tests pass under pytest. Sync/async clients, offline settings and `.env` isolation, network blocking, health payloads, request IDs, CORS, and 404/500 behavior are covered. `make test` and `make demo` do not exist yet. |
+| Repository contents | Phase 1 runtime skeleton is present: settings/logging, FastAPI health/request-ID behavior, offline pytest harness, Makefile, and placeholder-only `.env.example`. Persistence, sample data, domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P1-4: cached settings and JSON logging; health routes and request-ID propagation; offline pytest isolation; and `setup`, `backend`, `test`, `lint`, and `format` Make targets with complete environment documentation. |
+| Validated locally | Phase 1: 20 tests pass, Ruff lint/format checks pass, dependencies are consistent, and Uvicorn serves `/health/live` with a request ID. GNU Make is not installed on this machine, so Makefile targets were structurally tested and their underlying commands were run directly. `make demo` does not exist yet. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phase 1 is in progress (P1-1 through P1-3 complete; P1-4 pending). Phases 2–13 are not started. |
+| Phase plan | Phase 1 is validated locally. Phases 2–13 are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 

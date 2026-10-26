@@ -20,7 +20,6 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-
 _TEST_DATA_DIR = Path(tempfile.mkdtemp(prefix="clouddesk-tests-"))
 OFFLINE_ENV: dict[str, str] = {
     "DEMO_MODE": "true",
@@ -53,8 +52,8 @@ for _secret_name in (
 
 
 # Application imports intentionally follow the environment bootstrap above.
-from app.core.config import get_settings  # noqa: E402
-from app.main import create_app  # noqa: E402
+from app.core.config import get_settings
+from app.main import create_app
 
 
 class NetworkAccessBlocked(RuntimeError):
@@ -82,9 +81,7 @@ def _deny_network(address: object) -> NoReturn:
     raise NetworkAccessBlocked("Tests must run offline; outbound network access is blocked")
 
 
-def _guarded_create_connection(
-    address: object, *args: object, **kwargs: object
-) -> socket.socket:
+def _guarded_create_connection(address: object, *args: object, **kwargs: object) -> socket.socket:
     if not _is_loopback(address):
         _deny_network(address)
     return _original_create_connection(address, *args, **kwargs)  # type: ignore[arg-type]

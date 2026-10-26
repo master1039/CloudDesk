@@ -4,12 +4,10 @@ from __future__ import annotations
 
 from uuid import uuid4
 
+from app.core.logging import get_logger, reset_request_id, set_request_id
 from starlette.datastructures import Headers, MutableHeaders
 from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
-
-from app.core.logging import get_logger, reset_request_id, set_request_id
-
 
 REQUEST_ID_HEADER = "X-Request-ID"
 MAX_REQUEST_ID_LENGTH = 128
