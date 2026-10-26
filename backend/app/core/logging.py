@@ -14,6 +14,7 @@ from typing import Any, Iterator
 _request_id: ContextVar[str | None] = ContextVar("request_id", default=None)
 _workflow_id: ContextVar[str | None] = ContextVar("workflow_id", default=None)
 
+
 _STANDARD_LOG_RECORD_FIELDS = frozenset(
     logging.LogRecord(
         name="",
