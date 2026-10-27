@@ -565,6 +565,6 @@ this file. Stage 17 is optional and is not a core exit criterion.
   this specification; section 14 commands must be validated as their implementation phases land.
 - The course documents reference `../docs/…`, `../deployment-agent/…` and `../shared-infrastructure/…`
   that sit outside Project 1. Decide whether they are copied in or referenced.
-- Document counts differ slightly between files (for example tables: 16 in the database doc, 15 data
-  tables in RLS). Treat `database/schema.sql` as the authority once written.
+- Resolved on 2026-10-27: `database/schema.sql` defines all 16 data tables and is the authority for
+  table count; `database/rls_policies.sql` covers the same set.
 - Stage 17 (Agentic DevOps) depends on Stages 13–16; treat it as optional for the core Project 1 completion.

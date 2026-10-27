@@ -127,19 +127,19 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-10-27 |
 |---|---|
-| Repository contents | Phase 1 is present. P2-1 adds the portable SQLAlchemy metadata, all 16 ORM entities, relationships, constraints, shared timestamps, and domain enums. PostgreSQL DDL/RLS, repositories, sample data, domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P1-4 plus P2-1. The persistence model uses `String(36)` UUIDs, generic JSON, non-native validated enums, and the exact ten ticket categories from `schemas/common.py`. |
-| Validated locally | 24 tests pass; the 16-table model creates and round-trips customer context and tickets on in-memory SQLite; invalid categories are rejected; Ruff and dependency checks pass. Phase 1's Uvicorn smoke remains validated. GNU Make is not installed, so its targets were structurally tested and underlying commands run directly. |
+| Repository contents | Phase 1 and P2-1/P2-2 are present: portable ORM entities, authoritative 16-table PostgreSQL DDL, update triggers, Supabase RLS policies, and a self-contained baseline migration. Repositories, sample data, domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P1-4 plus P2-1 and P2-2. PostgreSQL uses `VARCHAR(36)` IDs and `JSON`, mirrors ORM column types/indexes, updates timestamps by trigger, grants authenticated users read-only support access, and reserves mutations for `service_role`. |
+| Validated locally | 29 tests pass; structural tests prove ORM/DDL tables, columns, types, and indexes match, all 16 tables have update-trigger and RLS coverage, authenticated write policies are absent, and migration `0001` is self-contained. SQL was not executed against PostgreSQL because no local `psql` or cloud credentials were used. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phase 1 is validated locally. Phase 2 is in progress (P2-1 complete; P2-2 through P2-4 pending). Phases 3–13 are not started. |
+| Phase plan | Phase 1 is validated locally. Phase 2 is in progress (P2-1 and P2-2 complete; P2-3 and P2-4 pending). Phases 3–13 are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
 - The course's original Project 1 `README.md` was not supplied. A repository README was created from `CLAUDE.md`; its planned commands still need validation as their phases are implemented.
 - Course paths `../docs/`, `../deployment-agent/`, and `../shared-infrastructure/` sit outside this repo. They are not copied in yet.
-- Table counts disagree across the course notes (16 in the database doc, 15 data tables in the RLS note). `database/schema.sql` becomes the authority once it is written.
+- Resolved 2026-10-27: `database/schema.sql` defines 16 tables and is authoritative; RLS covers the same 16 tables.
 - Stage documents 00–17 are not in this repo. `PLAN_PHASE.md` is derived from `CLAUDE.md`, not from those missing files.
 
 ## Update protocol
