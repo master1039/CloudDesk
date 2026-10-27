@@ -125,15 +125,15 @@ Cases live in `datasets/eval_cases.json` and each case needs a valid `expected_c
 
 Update each row in place. Do not mark a row done from intention.
 
-| Surface | State on 2026-10-26 |
+| Surface | State on 2026-10-27 |
 |---|---|
-| Repository contents | Phase 1 runtime skeleton is present: settings/logging, FastAPI health/request-ID behavior, offline pytest harness, Makefile, and placeholder-only `.env.example`. Persistence, sample data, domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P1-4: cached settings and JSON logging; health routes and request-ID propagation; offline pytest isolation; and `setup`, `backend`, `test`, `lint`, and `format` Make targets with complete environment documentation. |
-| Validated locally | Phase 1: 20 tests pass, Ruff lint/format checks pass, dependencies are consistent, and Uvicorn serves `/health/live` with a request ID. GNU Make is not installed on this machine, so Makefile targets were structurally tested and their underlying commands were run directly. `make demo` does not exist yet. |
+| Repository contents | Phase 1 is present. P2-1 adds the portable SQLAlchemy metadata, all 16 ORM entities, relationships, constraints, shared timestamps, and domain enums. PostgreSQL DDL/RLS, repositories, sample data, domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P1-4 plus P2-1. The persistence model uses `String(36)` UUIDs, generic JSON, non-native validated enums, and the exact ten ticket categories from `schemas/common.py`. |
+| Validated locally | 24 tests pass; the 16-table model creates and round-trips customer context and tickets on in-memory SQLite; invalid categories are rejected; Ruff and dependency checks pass. Phase 1's Uvicorn smoke remains validated. GNU Make is not installed, so its targets were structurally tested and underlying commands run directly. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phase 1 is validated locally. Phases 2–13 are not started. |
+| Phase plan | Phase 1 is validated locally. Phase 2 is in progress (P2-1 complete; P2-2 through P2-4 pending). Phases 3–13 are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
