@@ -5,10 +5,12 @@ description = "Autonomous customer support and resolution platform"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "aiosqlite>=0.20,<1",
+    "asyncpg>=0.30,<1",
     "fastapi>=0.115,<1",
     "langchain>=1.4.7",
     "pydantic-settings>=2.7,<3",
-    "sqlalchemy>=2.0,<3",
+    "sqlalchemy[asyncio]>=2.0,<3",
     "uvicorn[standard]>=0.34,<1",
 ]
 
