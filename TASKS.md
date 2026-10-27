@@ -35,7 +35,7 @@ Sub-tasks in the same phase that do not share files can be open at the same time
 |------|--------|--------|
 | P2-1 · SQLAlchemy entities and category enum | `feature/sqlalchemy-entities` | Completed ✅ |
 | P2-2 · Postgres schema, RLS, and migrations | `feature/postgres-schema-rls` | Completed ✅ |
-| P2-3 · Repository layer | `feature/repository-layer` | Pending ❌ |
+| P2-3 · Repository layer | `feature/repository-layer` | Completed ✅ |
 | P2-4 · Sample data and demo bootstrap | `feature/sample-data-bootstrap` | Pending ❌ |
 
 ---
@@ -260,7 +260,7 @@ Phases 4, 5, 6, and 7 start together once Phase 2 (and Phase 3, for Phase 4 only
 | Phase | Name | Tasks | Completed |
 |-------|------|-------|-----------|
 | 1 | Runtime skeleton | 4 | 4 |
-| 2 | Persistence and demo data | 4 | 2 |
+| 2 | Persistence and demo data | 4 | 3 |
 | 3 | Identity and request guards | 4 | 0 |
 | 4 | Support API | 3 | 0 |
 | 5 | Knowledge pipeline | 4 | 0 |

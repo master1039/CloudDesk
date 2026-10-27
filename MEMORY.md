@@ -127,13 +127,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-10-27 |
 |---|---|
-| Repository contents | Phase 1 and P2-1/P2-2 are present: portable ORM entities, authoritative 16-table PostgreSQL DDL, update triggers, Supabase RLS policies, and a self-contained baseline migration. Repositories, sample data, domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P1-4 plus P2-1 and P2-2. PostgreSQL uses `VARCHAR(36)` IDs and `JSON`, mirrors ORM column types/indexes, updates timestamps by trigger, grants authenticated users read-only support access, and reserves mutations for `service_role`. |
-| Validated locally | 29 tests pass; structural tests prove ORM/DDL tables, columns, types, and indexes match, all 16 tables have update-trigger and RLS coverage, authenticated write policies are absent, and migration `0001` is self-contained. SQL was not executed against PostgreSQL because no local `psql` or cloud credentials were used. |
+| Repository contents | Phase 1 and P2-1 through P2-3 are present: portable ORM entities, PostgreSQL DDL/RLS/migration files, async SQLite/PostgreSQL session infrastructure, and repositories for all 16 entities. Sample data, domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P1-4 plus P2-1 through P2-3. Repositories flush without committing so services own transactions; focused queries eagerly load customer/ticket context and expose knowledge, incident, workflow trace, action, approval, escalation, memory, and audit access. |
+| Validated locally | 35 tests pass offline. Repository tests cover all 16 entities, commit/rollback ownership, F1/F4 customer context and ticket filtering, prior resolved tickets, ordered workflow traces, and pagination bounds. Ruff, dependency, and lock checks pass. PostgreSQL SQL remains structurally validated but was not executed against a live instance. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phase 1 is validated locally. Phase 2 is in progress (P2-1 and P2-2 complete; P2-3 and P2-4 pending). Phases 3–13 are not started. |
+| Phase plan | Phase 1 is validated locally. Phase 2 is in progress (P2-1 through P2-3 complete; P2-4 pending). Phases 3–13 are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
