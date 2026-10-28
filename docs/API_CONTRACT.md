@@ -62,8 +62,11 @@ role receives 403.
 | GET | `/api/v1/auth/me` | viewer | — | `200 Profile` |
 
 `LoginRequest`: `email`, `password`. In demo mode this authenticates only configured demo users.
+All three checked-in demo profiles use the intentionally public password `clouddesk-demo`; local login
+returns 403 when `DEMO_MODE=false`. Invalid email and password attempts share the same 401 response.
 
-`AuthResponse`: `access_token`, `token_type: "bearer"`, `expires_in`, `user: Profile`.
+`AuthResponse`: `access_token`, `token_type: "bearer"`, `expires_in`, `user: Profile`. Demo tokens
+expire after 8 hours (`expires_in: 28800`).
 
 `Profile`: `id`, `email`, `display_name`, `role`.
 

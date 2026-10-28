@@ -34,6 +34,9 @@ make test
 make lint
 ```
 
+Demo authentication uses `admin@clouddesk.demo`, `sam.agent@clouddesk.demo`, or
+`vic.viewer@clouddesk.demo` with the intentionally public local password `clouddesk-demo`.
+
 The following commands are planned for later phases and do not exist yet:
 
 ```powershell
