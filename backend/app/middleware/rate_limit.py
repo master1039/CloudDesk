@@ -8,8 +8,9 @@ from dataclasses import dataclass
 
 from app.core.logging import get_logger
 from app.core.redis import RedisClient, get_redis_client
+from app.middleware.request_id import REQUEST_ID_HEADER, request_id_from
 from redis.exceptions import RedisError
-from starlette.datastructures import MutableHeaders
+from starlette.datastructures import Headers, MutableHeaders
 from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
@@ -107,6 +108,7 @@ class RateLimitMiddleware:
 
         client = scope.get("client")
         client_id = client[0] if client else "unknown"
+        request_id = request_id_from(Headers(scope=scope))
         try:
             limiter = FixedWindowRateLimiter(
                 self.redis_provider(),
@@ -120,12 +122,16 @@ class RateLimitMiddleware:
             response = JSONResponse(
                 status_code=503,
                 content={"detail": "Rate limiter is unavailable"},
+                headers={REQUEST_ID_HEADER: request_id},
             )
             await response(scope, receive, send)
             return
 
         if not decision.allowed:
-            headers = decision.headers | {RETRY_AFTER_HEADER: str(decision.retry_after)}
+            headers = decision.headers | {
+                RETRY_AFTER_HEADER: str(decision.retry_after),
+                REQUEST_ID_HEADER: request_id,
+            }
             response = JSONResponse(
                 status_code=429,
                 content={"detail": "Rate limit exceeded"},

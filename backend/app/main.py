@@ -17,6 +17,7 @@ from app.middleware import (
     RATE_LIMIT_RESET_HEADER,
     REQUEST_ID_HEADER,
     RETRY_AFTER_HEADER,
+    AuditMiddleware,
     RateLimitMiddleware,
     RequestIdMiddleware,
 )
@@ -58,10 +59,6 @@ def create_app() -> FastAPI:
     application.include_router(health_router)
 
     application.add_middleware(
-        RateLimitMiddleware,
-        limit=settings.rate_limit_per_minute,
-    )
-    application.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
         allow_credentials=True,
@@ -76,6 +73,11 @@ def create_app() -> FastAPI:
         ],
     )
     application.add_middleware(RequestIdMiddleware)
+    application.add_middleware(
+        RateLimitMiddleware,
+        limit=settings.rate_limit_per_minute,
+    )
+    application.add_middleware(AuditMiddleware)
     return application
 
 
