@@ -13,6 +13,10 @@ Target HTTP contract for the v1 agent console. This document is authoritative fo
 - Errors use `{ "detail": string }`.
 - List responses use `{ "items": T[], "total": integer, "limit": integer, "offset": integer }`.
 - Unknown resources return 404; invalid input returns 422; insufficient role returns 403.
+- Non-health HTTP requests use a per-client, 60-second Redis fixed window. Responses include
+  `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and the Unix timestamp `X-RateLimit-Reset`. A blocked
+  request returns `429 { "detail": "Rate limit exceeded" }` plus `Retry-After`. Health routes and CORS
+  preflight requests are exempt; unavailable Redis returns 503 rather than silently disabling limits.
 - A second run while a ticket waits for approval returns 409. Resuming a non-paused run returns 409.
 
 Roles: `viewer` can read; `agent` can run workflows and act on tickets/approvals; `admin` additionally manages knowledge indexing and settings.
