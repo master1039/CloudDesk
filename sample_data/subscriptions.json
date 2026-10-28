@@ -1,0 +1,10 @@
+[
+  {"customer_ref": "cust-acme", "plan": "enterprise", "seats": 120, "amount": "4800.00", "billing_interval": "monthly", "attributes": {"sso": true}},
+  {"customer_ref": "cust-northstar", "plan": "business", "seats": 25, "amount": "750.00", "billing_interval": "monthly"},
+  {"customer_ref": "cust-orbit", "plan": "pro", "seats": 8, "amount": "160.00", "billing_interval": "monthly"},
+  {"customer_ref": "cust-secure", "plan": "enterprise", "seats": 300, "amount": "12000.00", "billing_interval": "monthly", "attributes": {"security_contact": true}},
+  {"customer_ref": "cust-archive", "plan": "business", "seats": 40, "amount": "1200.00", "billing_interval": "monthly"},
+  {"customer_ref": "cust-lumen", "plan": "free", "seats": 3, "amount": "0.00", "billing_interval": "monthly"},
+  {"customer_ref": "cust-river", "plan": "pro", "seats": 12, "amount": "240.00", "billing_interval": "monthly"},
+  {"customer_ref": "cust-cascade", "plan": "business", "seats": 18, "amount": "540.00", "billing_interval": "monthly"}
+]

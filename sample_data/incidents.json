@@ -1,0 +1,4 @@
+[
+  {"product_slug": "clouddesk-core", "title": "Enterprise SSO authentication degradation", "description": "Some enterprise identity-provider assertions are timing out during validation.", "status": "identified", "severity": "high", "affected_services": ["sso", "authentication"]},
+  {"product_slug": "clouddesk-integrations", "title": "Delayed Slack event delivery", "description": "Slack events may arrive several minutes late while queues recover.", "status": "monitoring", "severity": "medium", "affected_services": ["slack", "webhooks"]}
+]

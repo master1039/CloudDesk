@@ -1,0 +1,5 @@
+[
+  {"name": "CloudDesk Core", "slug": "clouddesk-core", "description": "Workspaces, identity, sharing, and cloud file storage.", "attributes": {"status_page": "core"}},
+  {"name": "CloudDesk API", "slug": "clouddesk-api", "description": "Public API and developer access.", "attributes": {"status_page": "api"}},
+  {"name": "CloudDesk Integrations", "slug": "clouddesk-integrations", "description": "Third-party application integrations.", "attributes": {"status_page": "integrations"}}
+]
