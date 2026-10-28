@@ -10,7 +10,16 @@ from app.api.health import router as health_router
 from app.core.config import get_settings
 from app.core.database import create_tables, dispose_database, get_session_factory
 from app.core.logging import setup_logging
-from app.middleware import REQUEST_ID_HEADER, RequestIdMiddleware
+from app.core.redis import close_redis
+from app.middleware import (
+    RATE_LIMIT_HEADER,
+    RATE_LIMIT_REMAINING_HEADER,
+    RATE_LIMIT_RESET_HEADER,
+    REQUEST_ID_HEADER,
+    RETRY_AFTER_HEADER,
+    RateLimitMiddleware,
+    RequestIdMiddleware,
+)
 from app.services.seed_service import bootstrap_demo_data
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -30,7 +39,10 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     try:
         yield
     finally:
-        await dispose_database()
+        try:
+            await close_redis()
+        finally:
+            await dispose_database()
 
 
 def create_app() -> FastAPI:
@@ -46,12 +58,22 @@ def create_app() -> FastAPI:
     application.include_router(health_router)
 
     application.add_middleware(
+        RateLimitMiddleware,
+        limit=settings.rate_limit_per_minute,
+    )
+    application.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
-        expose_headers=[REQUEST_ID_HEADER],
+        expose_headers=[
+            REQUEST_ID_HEADER,
+            RATE_LIMIT_HEADER,
+            RATE_LIMIT_REMAINING_HEADER,
+            RATE_LIMIT_RESET_HEADER,
+            RETRY_AFTER_HEADER,
+        ],
     )
     application.add_middleware(RequestIdMiddleware)
     return application
