@@ -205,6 +205,11 @@ Filters: `actor_id`, `method`, `path`, `request_id`, `from`, `to`, `limit`, `off
 
 `AuditEntry`: `id`, `actor_id`, `actor_role`, `method`, `path`, `status_code`, `request_id`, scrubbed `change_summary`, `created_at`.
 
+Every non-GET request is audited, including rejected requests. Audit middleware never stores request
+bodies, authorization headers, query values, passwords, or tokens. `change_summary` contains only the
+outcome class and whether a valid bearer identity was present. Audit persistence failures are logged
+without replacing the HTTP response already produced for the caller.
+
 ## Settings
 
 | Method | Path | Role | Result |

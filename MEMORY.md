@@ -127,13 +127,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-10-28 |
 |---|---|
-| Repository contents | Phases 1 and 2 plus P3-1 through P3-3 are present: persistence/demo data, JWT/RBAC, demo auth routes, and per-client Redis fixed-window rate limiting with fakeredis offline support. Audit middleware, domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P1-4, P2-1 through P2-4, and P3-1 through P3-3. Non-health HTTP requests are limited by client IP in 60-second Redis windows, return limit/reset headers, and receive 429 plus `Retry-After` when blocked. Health and preflight requests are exempt; Redis failures return 503 rather than silently disabling the control. |
-| Validated locally | 63 tests pass offline. Rate-limit tests cover window exhaustion and reset, independent client IPs, response headers, 429 request IDs, health/preflight exemptions, invalid configuration, and fail-closed Redis outages using fakeredis. Auth, RBAC, Ruff, dependency, lock, persistence, seed, and schema checks pass. No live Redis or cloud service was used. |
+| Repository contents | Phases 1 through 3 are present: runtime and demo persistence, JWT/RBAC and demo authentication, Redis fixed-window rate limiting, and durable audit middleware. Domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P3-4. Every non-GET request, including rejected requests, writes scrubbed request metadata to `audit_logs` without storing bodies, query values, authorization headers, or tokens. Audit failure cannot replace the caller response. Middleware registration is locked as CORS → RequestId → RateLimit → Audit, with the last registered layer outermost. |
+| Validated locally | 67 tests pass offline. Audit tests cover authenticated success, viewer-denied mutation, GET exclusion, request correlation, secret/query omission, persistence failure isolation, and exact middleware registration order. Phase 3 also proves invalid-token rejection, viewer 403 behavior, agent acceptance, eight-hour demo login, and fakeredis rate limiting. Ruff, dependency, lock, persistence, seed, and schema checks pass. No live Redis, Supabase, or cloud service was used. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 and 2 are validated locally. Phase 3 is in progress (P3-1 through P3-3 complete; P3-4 pending). Phases 4–13 are not started. |
+| Phase plan | Phases 1 through 3 are validated locally. Phases 4–13 are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 

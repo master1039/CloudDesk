@@ -14,7 +14,9 @@ MAX_REQUEST_ID_LENGTH = 128
 logger = get_logger(__name__)
 
 
-def _request_id_from(headers: Headers) -> str:
+def request_id_from(headers: Headers) -> str:
+    """Return a safe caller request ID or generate a new UUID."""
+
     candidate = (headers.get(REQUEST_ID_HEADER) or "").strip()
     is_printable_ascii = all(32 < ord(character) < 127 for character in candidate)
     if candidate and len(candidate) <= MAX_REQUEST_ID_LENGTH and is_printable_ascii:
@@ -33,7 +35,7 @@ class RequestIdMiddleware:
             await self.app(scope, receive, send)
             return
 
-        request_id = _request_id_from(Headers(scope=scope))
+        request_id = request_id_from(Headers(scope=scope))
         token = set_request_id(request_id)
         response_started = False
 
