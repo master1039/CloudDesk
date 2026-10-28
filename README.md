@@ -2,7 +2,7 @@
 
 CloudDesk is an autonomous customer-support and resolution platform for a fictional SaaS product. It helps support agents understand tickets, retrieve evidence, troubleshoot issues, propose grounded replies, and safely execute or escalate resolutions. Money and account changes always require recorded human approval.
 
-The repository is currently in the specification stage. Application code, tests, sample data, containers, CI, and cloud infrastructure are planned but not yet implemented. See [MEMORY.md](MEMORY.md) for the honest current status.
+The repository currently includes the validated runtime skeleton and persistence/demo-data phases. Domain APIs, agents, the frontend, containers, CI, and cloud infrastructure remain planned. See [MEMORY.md](MEMORY.md) for the honest current status.
 
 ## Target stack
 
@@ -24,10 +24,11 @@ The repository is currently in the specification stage. Application code, tests,
 
 ## Local workflow
 
-Phase 1 provides these commands:
+Phases 1 and 2 provide these commands:
 
 ```powershell
 make setup
+make seed
 make backend
 make test
 make lint
@@ -36,7 +37,6 @@ make lint
 The following commands are planned for later phases and do not exist yet:
 
 ```powershell
-make seed
 make ingest
 make demo
 make demo TICKET=CD-1005

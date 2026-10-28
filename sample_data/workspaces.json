@@ -1,0 +1,10 @@
+[
+  {"customer_ref": "cust-acme", "name": "Acme HQ", "slug": "acme-hq", "storage_used_bytes": 480000000000, "storage_limit_bytes": 1000000000000, "settings": {"external_sharing": true}},
+  {"customer_ref": "cust-northstar", "name": "Northstar Engineering", "slug": "northstar-engineering", "storage_used_bytes": 180000000000, "storage_limit_bytes": 500000000000, "settings": {"external_sharing": true}},
+  {"customer_ref": "cust-orbit", "name": "Orbit Creative", "slug": "orbit-creative", "storage_used_bytes": 100000000000, "storage_limit_bytes": 100000000000, "settings": {"external_sharing": true}},
+  {"customer_ref": "cust-secure", "name": "Secure Health", "slug": "secure-health", "storage_used_bytes": 720000000000, "storage_limit_bytes": 2000000000000, "settings": {"external_sharing": false}},
+  {"customer_ref": "cust-archive", "name": "Archive Operations", "slug": "archive-operations", "storage_used_bytes": 420000000000, "storage_limit_bytes": 500000000000, "settings": {"external_sharing": false}},
+  {"customer_ref": "cust-lumen", "name": "Lumen Personal", "slug": "lumen-personal", "storage_used_bytes": 3000000000, "storage_limit_bytes": 5000000000, "settings": {"external_sharing": true}},
+  {"customer_ref": "cust-river", "name": "River Commerce", "slug": "river-commerce", "storage_used_bytes": 55000000000, "storage_limit_bytes": 100000000000, "settings": {"external_sharing": true}},
+  {"customer_ref": "cust-cascade", "name": "Cascade Production", "slug": "cascade-production", "storage_used_bytes": 240000000000, "storage_limit_bytes": 500000000000, "settings": {"external_sharing": true}}
+]

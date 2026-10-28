@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 from functools import lru_cache
+from pathlib import Path
 
 from app.core.config import get_settings
 from sqlalchemy import MetaData
@@ -69,6 +70,10 @@ async def create_tables(engine: AsyncEngine | None = None) -> None:
     import app.models  # noqa: F401 -- registers entities on Base.metadata
 
     target = engine or get_engine()
+    if target.url.get_backend_name() == "sqlite":
+        database_path = target.url.database
+        if database_path and database_path != ":memory:":
+            Path(database_path).parent.mkdir(parents=True, exist_ok=True)
     async with target.begin() as connection:
         await connection.run_sync(Base.metadata.create_all)
 

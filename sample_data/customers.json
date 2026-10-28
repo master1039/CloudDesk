@@ -1,0 +1,10 @@
+[
+  {"external_ref": "cust-acme", "name": "Asha Rao", "email": "asha@acme.example", "company": "Acme Analytics", "phone": "+1-555-0101", "attributes": {"region": "us-east"}},
+  {"external_ref": "cust-northstar", "name": "Mateo Silva", "email": "mateo@northstar.example", "company": "Northstar Labs", "phone": "+1-555-0102", "attributes": {"region": "us-west"}},
+  {"external_ref": "cust-orbit", "name": "Priya Shah", "email": "priya@orbit.example", "company": "Orbit Design", "phone": "+44-20-5550-103", "attributes": {"region": "eu-west"}},
+  {"external_ref": "cust-secure", "name": "Elena Park", "email": "elena@secure.example", "company": "Secure Health", "phone": "+1-555-0104", "attributes": {"region": "us-central"}},
+  {"external_ref": "cust-archive", "name": "Noah Williams", "email": "noah@archive.example", "company": "Archive Works", "phone": "+1-555-0105", "attributes": {"region": "us-east"}},
+  {"external_ref": "cust-lumen", "name": "Mina Chen", "email": "mina@lumen.example", "company": "Lumen Studio", "phone": "+61-2-5550-106", "attributes": {"region": "ap-southeast"}},
+  {"external_ref": "cust-river", "name": "Owen Brooks", "email": "owen@river.example", "company": "River Retail", "phone": "+1-555-0107", "attributes": {"region": "us-west"}},
+  {"external_ref": "cust-cascade", "name": "Fatima Khan", "email": "fatima@cascade.example", "company": "Cascade Media", "phone": "+1-555-0108", "attributes": {"region": "ca-central"}}
+]

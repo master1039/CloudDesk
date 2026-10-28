@@ -125,15 +125,15 @@ Cases live in `datasets/eval_cases.json` and each case needs a valid `expected_c
 
 Update each row in place. Do not mark a row done from intention.
 
-| Surface | State on 2026-10-27 |
+| Surface | State on 2026-10-28 |
 |---|---|
-| Repository contents | Phase 1 and P2-1 through P2-3 are present: portable ORM entities, PostgreSQL DDL/RLS/migration files, async SQLite/PostgreSQL session infrastructure, and repositories for all 16 entities. Sample data, domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P1-4 plus P2-1 through P2-3. Repositories flush without committing so services own transactions; focused queries eagerly load customer/ticket context and expose knowledge, incident, workflow trace, action, approval, escalation, memory, and audit access. |
-| Validated locally | 35 tests pass offline. Repository tests cover all 16 entities, commit/rollback ownership, F1/F4 customer context and ticket filtering, prior resolved tickets, ordered workflow traces, and pagination bounds. Ruff, dependency, and lock checks pass. PostgreSQL SQL remains structurally validated but was not executed against a live instance. |
+| Repository contents | Phases 1 and 2 are present: runtime health/logging, the portable 16-entity persistence model, PostgreSQL DDL/RLS/migration/seed SQL, async repositories, 8 demo customers, 13 scenario tickets, 15 knowledge articles, and idempotent SQLite startup seeding. Domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P1-4 and P2-1 through P2-4. Demo-mode lifespan creates tables and seeds only an empty database; `make seed` uses the same transaction-safe service. The dataset includes demo profiles, all four plans, workspaces, products, active incidents, prior-resolution memory, ticket messages, and the locked safety scenarios. |
+| Validated locally | 39 tests pass offline. Fresh startup loads 3 profiles, 8 customers, 13 tickets, 15 articles, and 4 prior-resolution memories; a second bootstrap does not duplicate data. The exact command behind `make seed` produced `seeded: true` then `seeded: false` with unchanged counts. GNU Make is not installed, so the target itself was not invoked. Ruff, dependency, lock, and repository/schema checks pass. PostgreSQL SQL was not applied to a live instance. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phase 1 is validated locally. Phase 2 is in progress (P2-1 through P2-3 complete; P2-4 pending). Phases 3–13 are not started. |
+| Phase plan | Phases 1 and 2 are validated locally. Phases 3–13 are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 

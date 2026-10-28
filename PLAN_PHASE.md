@@ -7,7 +7,7 @@ Status values: `not started`, `in progress`, `implemented`, `validated locally`.
 | Phase | Name | Status |
 |---|---|---|
 | 1 | Runtime skeleton | validated locally |
-| 2 | Persistence and demo data | in progress |
+| 2 | Persistence and demo data | validated locally |
 | 3 | Identity and request guards | not started |
 | 4 | Support API | not started |
 | 5 | Knowledge pipeline | not started |

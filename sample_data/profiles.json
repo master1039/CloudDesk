@@ -1,0 +1,5 @@
+[
+  {"email": "admin@clouddesk.demo", "display_name": "CloudDesk Admin", "role": "admin"},
+  {"email": "sam.agent@clouddesk.demo", "display_name": "Sam Agent", "role": "agent"},
+  {"email": "vic.viewer@clouddesk.demo", "display_name": "Vic Viewer", "role": "viewer"}
+]
