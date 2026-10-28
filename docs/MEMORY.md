@@ -127,13 +127,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-10-28 |
 |---|---|
-| Repository contents | Phases 1 and 2 plus P3-1 are present: runtime health/logging, portable persistence and demo data, and Supabase-compatible HS256 bearer authentication with hierarchical RBAC. Demo auth routes, rate limiting, audit middleware, domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P1-4, P2-1 through P2-4, and P3-1. JWT validation requires `sub` and `exp`, accepts CloudDesk roles from top-level or Supabase metadata claims, prefers `SUPABASE_JWT_SECRET`, fails closed when no secret is configured, and enforces `viewer < agent < admin` through `require_role`. |
-| Validated locally | 50 tests pass offline. Authentication tests cover missing, malformed, expired, wrong-signature, and missing-role tokens; viewer 403 behavior; agent/admin hierarchy; Supabase metadata roles and audience; secret precedence; and unconfigured authentication. Ruff, dependency, lock, persistence, seed, and schema checks pass. No live Supabase token or cloud service was used. |
+| Repository contents | Phases 1 and 2 plus P3-1/P3-2 are present: runtime health/logging, portable persistence and demo data, Supabase-compatible HS256 bearer authentication, hierarchical RBAC, demo login, and authenticated profile routes. Rate limiting, audit middleware, domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P1-4, P2-1 through P2-4, and P3-1/P3-2. Demo login is enabled only in `DEMO_MODE`, authenticates the three seeded active profiles with a constant-time generic failure path, issues eight-hour Supabase-shaped tokens, and resolves `/api/v1/auth/me` against the current active database profile. |
+| Validated locally | 58 tests pass offline. Auth route tests cover all three roles, case-insensitive email, token claims and eight-hour expiry, `/auth/me`, unknown-user and wrong-password parity, missing bearer credentials, locked role values, and non-demo rejection. JWT/RBAC, Ruff, dependency, lock, persistence, seed, and schema checks pass. No live Supabase token or cloud service was used. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 and 2 are validated locally. Phase 3 is in progress (P3-1 complete; P3-2 through P3-4 pending). Phases 4–13 are not started. |
+| Phase plan | Phases 1 and 2 are validated locally. Phase 3 is in progress (P3-1 and P3-2 complete; P3-3 and P3-4 pending). Phases 4–13 are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
