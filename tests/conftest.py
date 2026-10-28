@@ -26,6 +26,7 @@ OFFLINE_ENV: dict[str, str] = {
     "ENVIRONMENT": "test",
     "DATABASE_URL": f"sqlite+aiosqlite:///{(_TEST_DATA_DIR / 'support.db').as_posix()}",
     "CHECKPOINT_DB_PATH": ":memory:",
+    "JWT_SECRET": "offline-test-jwt-secret-not-for-production",
     "REDIS_URL": "",
     "USE_FAKE_REDIS": "true",
     "LLM_PROVIDER": "fake",

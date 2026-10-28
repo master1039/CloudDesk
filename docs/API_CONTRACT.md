@@ -49,6 +49,13 @@ runtime-skeleton phase.
 
 ## Authentication
 
+Bearer tokens use HS256, require `sub` and `exp`, and are verified with
+`SUPABASE_JWT_SECRET` when configured or `JWT_SECRET` otherwise. CloudDesk roles may be carried in
+`app_role`, `app_metadata.role`, `user_metadata.role`, or a top-level `role`; only `viewer`, `agent`,
+and `admin` are accepted as application roles. A Supabase `aud: authenticated` claim is supported.
+Missing or invalid credentials return 401, while an authenticated user below the route's minimum
+role receives 403.
+
 | Method | Path | Role | Request | Response |
 |---|---|---|---|---|
 | POST | `/api/v1/auth/login` | public | `LoginRequest` | `200 AuthResponse` |
