@@ -6,6 +6,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from app.api.auth import router as auth_router
+from app.api.customers import router as customers_router
 from app.api.health import router as health_router
 from app.api.tickets import router as tickets_router
 from app.core.config import get_settings
@@ -57,6 +58,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     application.include_router(auth_router)
+    application.include_router(customers_router)
     application.include_router(tickets_router)
     application.include_router(health_router)
 

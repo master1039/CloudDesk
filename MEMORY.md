@@ -27,6 +27,9 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
 - P4-2 exposes authenticated ticket list/detail reads to viewers and ticket creation to agents. The
   service owns commit/rollback, repository filters cover the written contract, and SQLite-naive
   timestamps are normalized to UTC at the transport boundary.
+- P4-3 exposes viewer-protected customer list/detail reads. Customer detail returns the subscription,
+  deterministic primary workspace, up to 10 ticket summaries without bodies, and up to 10 memory
+  notes without fingerprints or internal attributes.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -133,13 +136,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-10-29 |
 |---|---|
-| Repository contents | Phases 1 through 3 are present. P4-1 defines the ticket/customer contract and P4-2 implements the ticket list, create, and detail routes. P4-3 customer routes are not implemented. Agents, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P3-4, P4-1, and P4-2. Viewers can list/filter/search and read tickets; agents can also create unclassified tickets from all four F1 channels. HTTP, service, and repository responsibilities remain separated. Every non-GET request is still handled by the audit middleware. |
-| Validated locally | 88 tests pass offline. P4-2 covers authentication, viewer/agent RBAC, list filters, search, pagination, detail retrieval, all four F1 creation channels, validation, unknown customer/ticket 404s, and stable UTC timestamps. Ruff passes across backend, tests, and `main.py`. No customer API routes, live Redis, Supabase, or cloud service were exercised. |
+| Repository contents | Phases 1 through 4 are present: runtime, persistence, identity/request guards, and the ticket/customer support API. Agents, the runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P4-3. Viewers can list/filter/search and read tickets and customers; agents can also create unclassified tickets from all four F1 channels. Customer detail provides bounded F4 account context without raw ticket bodies or memory internals. HTTP, service, and repository responsibilities remain separated. |
+| Validated locally | 94 tests pass offline. Phase 4 covers authentication and RBAC, ticket/customer list filters, search, pagination, details and 404s, all four F1 creation channels, and F4 subscription/workspace/ticket-history/memory context. Ruff passes across backend, tests, and `main.py`. No live Redis, PostgreSQL, Supabase, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 3 are validated locally. Phase 4 is in progress with P4-1 and P4-2 completed; later phases are not started. |
+| Phase plan | Phases 1 through 4 are validated locally. Later phases are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 

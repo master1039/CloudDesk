@@ -9,7 +9,7 @@ Status values: `not started`, `in progress`, `implemented`, `validated locally`.
 | 1 | Runtime skeleton | validated locally |
 | 2 | Persistence and demo data | validated locally |
 | 3 | Identity and request guards | validated locally |
-| 4 | Support API | in progress |
+| 4 | Support API | validated locally |
 | 5 | Knowledge pipeline | not started |
 | 6 | Tools and policy | not started |
 | 7 | Rules and guardrails | not started |
