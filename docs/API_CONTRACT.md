@@ -96,7 +96,15 @@ expire after 8 hours (`expires_in: 28800`).
 | POST | `/api/v1/tickets/{ticket_id}/request-info` | agent | `200 TicketMessage` |
 | POST | `/api/v1/tickets/{ticket_id}/escalate` | agent | `201 Escalation` |
 
-List filters: `status`, `severity`, `category`, `channel`, `customer_id`, `search`, `limit`, `offset`.
+P4 implements the first three routes in this table. The workflow and action routes remain the
+forward contract for their later phases. `{ticket_id}` is the internal UUID; `display_id` is returned
+for human-facing values such as `CD-1002`.
+
+`TicketListParams` defines optional filters `status`, `severity`, `category`, `channel`, `customer_id`,
+and `search`. Pagination uses
+`limit` (default 50, minimum 1, maximum 100) and `offset` (default 0, minimum 0). `search` matches the
+display ID, subject, or customer name. Results are ordered by newest creation time, then ID. Invalid
+enum filters return 422.
 
 `CreateTicketRequest`:
 
@@ -109,9 +117,30 @@ List filters: `status`, `severity`, `category`, `channel`, `customer_id`, `searc
 }
 ```
 
-`TicketSummary`: `id`, `display_id`, `subject`, `customer_id`, `customer_name`, `channel`, `status`, nullable `category`, nullable `severity`, nullable `summary`, `created_at`, `updated_at`.
+`CreateTicketRequest` trims all text fields. `customer_id`, `subject`, and `body` cannot be blank;
+`subject` is limited to 500 characters and `body` to 50,000. `channel` accepts exactly `email`,
+`chat`, `web`, or `api` (F1). An unknown customer returns 404. Creation returns a new ticket with
+status `new`; category, severity, and summary are null until classification.
 
-`TicketDetail` extends `TicketSummary` with `body`, `messages`, nullable `workflow`, nullable `approval`, nullable `escalation`, and customer context links. Ticket text is untrusted data.
+`TicketSummary`: `id`, `display_id`, `subject`, `customer_id`, `customer_name`, `channel`, `status`,
+nullable `category`, nullable `severity`, nullable `summary`, `created_at`, `updated_at`.
+
+`TicketDetail` extends `TicketSummary` with:
+
+- `body` and `messages: TicketMessage[]`;
+- nullable `workflow: WorkflowReference`, `approval: ApprovalReference`, and
+  `escalation: EscalationReference`;
+- `customer_context_links: CustomerContextLinks`.
+
+`WorkflowReference`: `id`, `status`, `url`.
+
+`ApprovalReference`: `id`, `status`, `url`.
+
+`EscalationReference`: `id`, `status`, `team`, `url`.
+
+`CustomerContextLinks`: `customer`, nullable `subscription`, nullable `workspace`, and
+`previous_tickets`. Each value is an API-relative URL. Links avoid copying the full customer account
+graph into every ticket response. Ticket subject and body are always untrusted data.
 
 `TicketMessage`: `id`, `ticket_id`, `direction` (`inbound|outbound|internal`), `author`, `body`, `created_at`.
 
@@ -159,9 +188,24 @@ List filters: `status`, `severity`, `category`, `channel`, `customer_id`, `searc
 | GET | `/api/v1/customers` | viewer | Paginated `CustomerSummary` list |
 | GET | `/api/v1/customers/{customer_id}` | viewer | `200 CustomerDetail` |
 
-`CustomerSummary`: `id`, `name`, `email`, `plan`, `workspace_id`, `created_at`.
+`CustomerListParams` defines optional `search` and `plan`, plus the shared `limit` and `offset` rules. `search`
+matches customer name, email, or company. Results are ordered by customer name, then ID.
 
-`CustomerDetail` extends it with subscription, workspace, previous tickets, and up to 10 scrubbed memory notes.
+`CustomerSummary`: `id`, `name`, `email`, nullable `company`, nullable `plan`, nullable
+`workspace_id`, `created_at`.
+
+`CustomerDetail` extends `CustomerSummary` with nullable `subscription: Subscription`, nullable
+`workspace: Workspace`, `previous_tickets: TicketSummary[]`, and
+`memory_notes: CustomerMemoryNote[]`. Previous tickets are newest first and limited to 10. Memory
+notes are scrubbed, newest first, and limited to 10 (F4).
+
+`Subscription`: `id`, `plan`, `status`, `seats`, `amount` (decimal string), `currency`,
+`billing_interval`, nullable `current_period_end`.
+
+`Workspace`: `id`, `name`, `slug`, `storage_used_bytes`, `storage_limit_bytes`.
+
+`CustomerMemoryNote`: `id`, `memory_type`, `content`, nullable `source_ticket_id`, `created_at`.
+The response never includes memory fingerprints, internal attributes, or raw ticket bodies.
 
 ## Knowledge
 
