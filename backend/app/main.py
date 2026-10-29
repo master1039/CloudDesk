@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 
 from app.api.auth import router as auth_router
 from app.api.health import router as health_router
+from app.api.tickets import router as tickets_router
 from app.core.config import get_settings
 from app.core.database import create_tables, dispose_database, get_session_factory
 from app.core.logging import setup_logging
@@ -56,6 +57,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     application.include_router(auth_router)
+    application.include_router(tickets_router)
     application.include_router(health_router)
 
     application.add_middleware(
