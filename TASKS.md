@@ -61,7 +61,7 @@ Sub-tasks in the same phase that do not share files can be open at the same time
 
 | Task | Branch | Status |
 |------|--------|--------|
-| P4-1 · Ticket and customer API contract | `feature/api-contract-docs` | Pending ❌ |
+| P4-1 · Ticket and customer API contract | `feature/api-contract-docs` | Completed ✅ |
 | P4-2 · Ticket API | `feature/api-tickets` | Pending ❌ |
 | P4-3 · Customer API | `feature/api-customers` | Pending ❌ |
 
@@ -262,7 +262,7 @@ Phases 4, 5, 6, and 7 start together once Phase 2 (and Phase 3, for Phase 4 only
 | 1 | Runtime skeleton | 4 | 4 |
 | 2 | Persistence and demo data | 4 | 4 |
 | 3 | Identity and request guards | 4 | 4 |
-| 4 | Support API | 3 | 0 |
+| 4 | Support API | 3 | 1 |
 | 5 | Knowledge pipeline | 4 | 0 |
 | 6 | Tools and mocks | 4 | 0 |
 | 7 | Rules and guardrails | 4 | 0 |
@@ -273,4 +273,4 @@ Phases 4, 5, 6, and 7 start together once Phase 2 (and Phase 3, for Phase 4 only
 | 12 | Console shell | 4 | 0 |
 | 13 | Ticket workflow screen | 4 | 0 |
 | 14 | Evaluation and delivery | 5 | 0 |
-| **Total** | | **62** | **0** |
+| **Total** | | **62** | **13** |
