@@ -34,7 +34,7 @@ def _newest[T](values: Iterable[T]) -> T | None:
     return max(values, key=lambda item: (item.created_at, item.id), default=None)  # type: ignore[attr-defined]
 
 
-def _as_utc(value: datetime) -> datetime:
+def as_utc(value: datetime) -> datetime:
     """Normalize SQLite-naive and PostgreSQL-aware timestamps to UTC transport values."""
 
     if value.tzinfo is None:
@@ -42,7 +42,7 @@ def _as_utc(value: datetime) -> datetime:
     return value.astimezone(UTC)
 
 
-def _ticket_summary(ticket: Ticket) -> TicketSummary:
+def ticket_summary(ticket: Ticket) -> TicketSummary:
     return TicketSummary(
         id=ticket.id,
         display_id=ticket.display_id,
@@ -54,8 +54,8 @@ def _ticket_summary(ticket: Ticket) -> TicketSummary:
         category=ticket.category,
         severity=ticket.severity,
         summary=ticket.summary,
-        created_at=_as_utc(ticket.created_at),
-        updated_at=_as_utc(ticket.updated_at),
+        created_at=as_utc(ticket.created_at),
+        updated_at=as_utc(ticket.updated_at),
     )
 
 
@@ -95,7 +95,7 @@ def _ticket_detail(ticket: Ticket) -> TicketDetail:
     approvals = [approval for run in ticket.workflow_runs for approval in run.approvals]
     workspace_id = ticket.workspace_id
     return TicketDetail(
-        **_ticket_summary(ticket).model_dump(),
+        **ticket_summary(ticket).model_dump(),
         body=ticket.body,
         messages=[
             TicketMessageResponse(
@@ -104,7 +104,7 @@ def _ticket_detail(ticket: Ticket) -> TicketDetail:
                 direction=message.direction,
                 author=message.author_name,
                 body=message.body,
-                created_at=_as_utc(message.created_at),
+                created_at=as_utc(message.created_at),
             )
             for message in ticket.messages
         ],
@@ -144,7 +144,7 @@ class TicketService:
         )
         total = await self.tickets.count_filtered(**filters)
         return TicketListResponse(
-            items=[_ticket_summary(ticket) for ticket in tickets],
+            items=[ticket_summary(ticket) for ticket in tickets],
             total=total,
             limit=params.limit,
             offset=params.offset,
