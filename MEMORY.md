@@ -24,6 +24,9 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
 - P4 transport shapes are synchronized across `docs/API_CONTRACT.md`, backend Pydantic schemas, and
   `frontend/lib/types.ts`. Ticket creation accepts exactly email, chat, web, and API channels; customer
   detail responses cap previous tickets and scrubbed memory notes at 10 each.
+- P4-2 exposes authenticated ticket list/detail reads to viewers and ticket creation to agents. The
+  service owns commit/rollback, repository filters cover the written contract, and SQLite-naive
+  timestamps are normalized to UTC at the transport boundary.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -130,13 +133,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-10-29 |
 |---|---|
-| Repository contents | Phases 1 through 3 are present. P4-1 adds the written and typed ticket/customer API contract; P4-2 and P4-3 routes are not implemented. Agents, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P3-4 and P4-1. Ticket and customer transport shapes are synchronized across the API contract, backend schemas, and future frontend types. Every non-GET request, including rejected requests, writes scrubbed request metadata to `audit_logs`. Middleware registration remains CORS → RequestId → RateLimit → Audit. |
-| Validated locally | 77 tests pass offline. The P4-1 tests cover all four F1 ticket channels, validation, typed filters and pagination, F4 customer context limits, and contract synchronization. Ruff passes across backend, tests, and `main.py`. No support API routes, live Redis, Supabase, or cloud service were exercised. |
+| Repository contents | Phases 1 through 3 are present. P4-1 defines the ticket/customer contract and P4-2 implements the ticket list, create, and detail routes. P4-3 customer routes are not implemented. Agents, the runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P3-4, P4-1, and P4-2. Viewers can list/filter/search and read tickets; agents can also create unclassified tickets from all four F1 channels. HTTP, service, and repository responsibilities remain separated. Every non-GET request is still handled by the audit middleware. |
+| Validated locally | 88 tests pass offline. P4-2 covers authentication, viewer/agent RBAC, list filters, search, pagination, detail retrieval, all four F1 creation channels, validation, unknown customer/ticket 404s, and stable UTC timestamps. Ruff passes across backend, tests, and `main.py`. No customer API routes, live Redis, Supabase, or cloud service were exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 3 are validated locally. Phase 4 is in progress with P4-1 completed; later phases are not started. |
+| Phase plan | Phases 1 through 3 are validated locally. Phase 4 is in progress with P4-1 and P4-2 completed; later phases are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
