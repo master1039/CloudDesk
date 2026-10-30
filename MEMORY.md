@@ -42,6 +42,10 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   can only reorder known evidence, and one result per article. Explicit metadata filters are hard
   restrictions; ticket category is a soft ranking signal. Cacheable queries use the documented key
   shape and a 300-second TTL.
+- P5-4 completes the knowledge pipeline. `rag.ingest` reports article/chunk/vector counts and the
+  knowledge runtime lazily builds the configured index. SQL-backed viewer routes list and read
+  published articles, viewer search returns cited evidence, and admin-only reindex recreates the
+  vector collection, clears retrieval-cache entries, and atomically swaps the active index.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -148,13 +152,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-10-30 |
 |---|---|
-| Repository contents | Phases 1 through 4 are present. Phase 5 now has article loading, heading-aware chunking, fake embeddings, interchangeable memory/Qdrant vector storage, and hybrid retrieval. Ingestion commands/routes, agents, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P4-3 and P5-1 through P5-3. The RAG package supports deterministic cited chunks, fake vectors, portable storage, semantic and BM25 modes, RRF hybrid ranking, heuristic and optional reranking, metadata filters, article deduplication, structured evidence, and retrieval caching. |
-| Validated locally | 129 tests pass offline. P5-3 validates expected top-three articles for key queries, semantic/keyword/hybrid modes, RRF, category/title reranking, filters, citations, one result per article, optional reranking, and the 300-second cache contract. Ruff passes across backend, `rag`, tests, and `main.py`. No live Qdrant or Redis server, ingestion API, PostgreSQL, Supabase, or cloud service was exercised. |
+| Repository contents | Phases 1 through 5 are present. The knowledge pipeline includes validated articles, chunking, fake embeddings, memory/Qdrant vector adapters, hybrid retrieval, ingestion, browsing/search routes, and admin reindex. Agents, the runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P5-4. The completed RAG phase supports deterministic ingestion, portable vector storage, semantic/BM25/hybrid search, RRF and reranking, citations, filters, article deduplication, cache use/invalidation, SQL-backed article browsing, and collection recreation. |
+| Validated locally | 143 tests pass offline. P5-4 validates 15 articles and 30 indexed chunks, a measured hit-rate@3 above 0.75, all knowledge routes and transport contracts, viewer/admin RBAC, cache-safe reindex, in-memory replacement, and embedded-Qdrant collection recreation. Ruff checks pass across backend, `rag`, tests, and `main.py`. The exact `make ingest` recipe reported 15 articles and 30 chunks/vectors; GNU Make itself is unavailable on this Windows host. No live Qdrant/Redis, PostgreSQL, Supabase, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 4 are validated locally. Phase 5 is in progress with P5-1 through P5-3 completed; later phases are not started. |
+| Phase plan | Phases 1 through 5 are validated locally; later phases are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 

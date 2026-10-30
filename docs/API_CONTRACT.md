@@ -211,16 +211,28 @@ The response never includes memory fingerprints, internal attributes, or raw tic
 
 | Method | Path | Role | Request/Query | Result |
 |---|---|---|---|---|
-| GET | `/api/v1/knowledge` | viewer | pagination/category/search | Article summaries |
+| GET | `/api/v1/knowledge` | viewer | `KnowledgeListParams` | Paginated `KnowledgeArticleSummary` |
 | GET | `/api/v1/knowledge/{article_id}` | viewer | — | `200 KnowledgeArticle` |
 | POST | `/api/v1/knowledge/search` | viewer | `KnowledgeSearchRequest` | `200 {"items": Evidence[]}` |
-| POST | `/api/v1/knowledge/reindex` | admin | optional provider/model override | `202 ReindexJob` |
+| POST | `/api/v1/knowledge/reindex` | admin | optional `ReindexRequest` | `202 ReindexJob` |
 
-`KnowledgeSearchRequest`: `query`, optional `category`, `mode` (`hybrid|semantic|keyword`, default `hybrid`), and `top_k`.
+`KnowledgeListParams` defines optional `category` and `search`, plus `limit` (default 50, range
+1–100) and `offset` (default 0). Search matches title, summary, or body. Published results are ordered
+by title, then ID.
+
+`KnowledgeSearchRequest`: trimmed `query` (1–2,000 characters), optional category reranking signal,
+`mode` (`hybrid|semantic|keyword`, default `hybrid`), and `top_k` (default 5, range 1–20).
+
+`KnowledgeArticleSummary`: `id`, `slug`, `title`, `category`, `tags`, `summary`, `updated_at`.
 
 `KnowledgeArticle`: `id`, `slug`, `title`, `category`, `tags`, `summary`, `body`, `updated_at`.
 
-`ReindexJob`: `id`, `status`, `collection`, `created_at`. Reindex recreates the selected collection.
+`ReindexRequest`: optional `embedding_provider` and `embedding_model`. Unsupported providers return
+422. The body may be omitted to use configured values.
+
+`ReindexJob`: `id`, `status: "completed"`, `collection`, `article_count`, `chunk_count`,
+`indexed_count`, `created_at`. Reindex recreates and repopulates the selected collection before the
+response is returned. Viewer and agent roles receive 403.
 
 ## Escalations
 

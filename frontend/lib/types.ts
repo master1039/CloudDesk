@@ -34,6 +34,7 @@ export type WorkflowStatus =
   | "failed";
 export type ApprovalStatus = "pending" | "approved" | "rejected";
 export type EscalationStatus = "open" | "in_progress" | "resolved" | "closed";
+export type RetrievalMode = "hybrid" | "semantic" | "keyword";
 
 export interface PaginatedResponse<T> {
   items: T[];
@@ -173,4 +174,63 @@ export interface CustomerDetail extends CustomerSummary {
 }
 
 export type CustomerListResponse = PaginatedResponse<CustomerSummary>;
+
+export interface KnowledgeListParams {
+  category?: TicketCategory;
+  search?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface KnowledgeArticleSummary {
+  id: string;
+  slug: string;
+  title: string;
+  category: TicketCategory;
+  tags: string[];
+  summary: string;
+  updated_at: string;
+}
+
+export interface KnowledgeArticle extends KnowledgeArticleSummary {
+  body: string;
+}
+
+export type KnowledgeListResponse = PaginatedResponse<KnowledgeArticleSummary>;
+
+export interface KnowledgeSearchRequest {
+  query: string;
+  category?: TicketCategory;
+  mode?: RetrievalMode;
+  top_k?: number;
+}
+
+export interface Evidence {
+  id: string;
+  title: string;
+  source: string;
+  snippet: string;
+  score: number;
+  url: string;
+  article_id: string;
+}
+
+export interface KnowledgeSearchResponse {
+  items: Evidence[];
+}
+
+export interface ReindexRequest {
+  embedding_provider?: string;
+  embedding_model?: string;
+}
+
+export interface ReindexJob {
+  id: string;
+  status: "completed";
+  collection: string;
+  article_count: number;
+  chunk_count: number;
+  indexed_count: number;
+  created_at: string;
+}
 

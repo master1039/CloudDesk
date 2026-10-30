@@ -17,6 +17,12 @@ from .embeddings import (
     FakeEmbeddings,
     get_embedding_service,
 )
+from .ingest import (
+    IngestReport,
+    KnowledgeIndex,
+    build_knowledge_index,
+    ingest_from_settings,
+)
 from .retriever import (
     DEFAULT_CANDIDATE_LIMIT,
     RETRIEVAL_CACHE_TTL_SECONDS,
@@ -54,9 +60,11 @@ __all__ = [
     "FakeEmbeddings",
     "HybridRetriever",
     "InMemoryVectorStore",
+    "IngestReport",
     "KnowledgeArticle",
     "KnowledgeArticleError",
     "KnowledgeChunk",
+    "KnowledgeIndex",
     "QdrantVectorStore",
     "RetrievalCache",
     "RetrievalMode",
@@ -64,11 +72,13 @@ __all__ = [
     "VectorSearchResult",
     "VectorStoreConfigurationError",
     "VectorStoreService",
+    "build_knowledge_index",
     "chunk_article",
     "chunk_articles",
     "get_embedding_service",
     "get_vector_store",
     "heuristic_rerank",
+    "ingest_from_settings",
     "load_article_file",
     "load_article_files",
     "reciprocal_rank_fusion",

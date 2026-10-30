@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
 from functools import lru_cache
 from typing import Any, Protocol
 
@@ -15,6 +16,10 @@ class RedisClient(Protocol):
     async def get(self, name: str) -> Any: ...
 
     async def set(self, name: str, value: Any, **kwargs: Any) -> Any: ...
+
+    async def delete(self, *names: str) -> int: ...
+
+    def scan_iter(self, match: str | None = None) -> AsyncIterator[str]: ...
 
     async def incr(self, name: str, amount: int = 1) -> int: ...
 
