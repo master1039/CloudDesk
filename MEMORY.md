@@ -33,6 +33,10 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
 - P5-1 validates the 15 Markdown knowledge articles and chunks them by Markdown heading. Final
   indexable content, including the `"{title} - {heading}"` prefix, is capped at 900 characters with
   150 characters of section-text overlap and deterministic chunk IDs/citation sources.
+- P5-2 uses deterministic, normalized 384-dimensional feature hashing in fake mode. Retrieval code
+  depends on one asynchronous vector-store protocol, while settings select either the concurrency-safe
+  in-memory cosine store or the Qdrant adapter. Qdrant point IDs are stable UUIDs, and the original
+  chunk ID plus citation metadata remain in the payload.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -139,13 +143,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-10-30 |
 |---|---|
-| Repository contents | Phases 1 through 4 are present, and Phase 5 has started with article loading and heading-aware chunking. Vector storage, retrieval, agents, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P4-3 and P5-1. The RAG package loads validated YAML front matter, preserves source metadata, and creates deterministic, cited 900/150 chunks with title/heading context. |
-| Validated locally | 106 tests pass offline. P5-1 validates all 15 articles, invalid metadata failures, heading sections, deterministic IDs and citations, and synthetic long-section 900/150 windows. Ruff passes across backend, `rag`, tests, and `main.py`. No embeddings, vector store, retrieval, live Redis, PostgreSQL, Supabase, or cloud service was exercised. |
+| Repository contents | Phases 1 through 4 are present. Phase 5 now has article loading, heading-aware chunking, fake embeddings, and interchangeable memory/Qdrant vector storage. Hybrid retrieval, agents, the runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P4-3, P5-1, and P5-2. The RAG package creates deterministic cited chunks, normalized fake vectors, portable vector documents, and supports cosine search, metadata filters, upsert, delete, count, and health operations behind one protocol. |
+| Validated locally | 114 tests pass offline. P5-2 validates deterministic 384-dimensional embeddings and the complete store contract against the in-memory store and Qdrant embedded local mode. Ruff passes across backend, `rag`, tests, and `main.py`. No live Qdrant server, retrieval pipeline, live Redis, PostgreSQL, Supabase, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 4 are validated locally. Phase 5 is in progress with P5-1 completed; later phases are not started. |
+| Phase plan | Phases 1 through 4 are validated locally. Phase 5 is in progress with P5-1 and P5-2 completed; later phases are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
