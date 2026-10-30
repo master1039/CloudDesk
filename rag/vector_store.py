@@ -341,6 +341,29 @@ async def vector_documents_from_chunks(
     ]
 
 
+async def recreate_vector_store(
+    settings: Settings | None = None,
+    *,
+    qdrant_client: AsyncQdrantClient | None = None,
+) -> VectorStoreService:
+    """Return an empty configured store, deleting the Qdrant collection when present."""
+
+    active_settings = settings or get_settings()
+    store = get_vector_store(active_settings, qdrant_client=qdrant_client)
+    if isinstance(store, QdrantVectorStore) and await store.client.collection_exists(
+        store.collection
+    ):
+        await store.client.delete_collection(store.collection)
+    return store
+
+
+async def close_vector_store(store: VectorStoreService) -> None:
+    """Release provider resources without exposing concrete stores to callers."""
+
+    if isinstance(store, QdrantVectorStore):
+        await store.client.close()
+
+
 def get_vector_store(
     settings: Settings | None = None,
     *,
@@ -366,4 +389,3 @@ def get_vector_store(
             client=qdrant_client,
         )
     raise VectorStoreConfigurationError(f"Unsupported vector store: {active_settings.vector_store}")
-

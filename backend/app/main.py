@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 from app.api.auth import router as auth_router
 from app.api.customers import router as customers_router
 from app.api.health import router as health_router
+from app.api.knowledge import router as knowledge_router
 from app.api.tickets import router as tickets_router
 from app.core.config import get_settings
 from app.core.database import create_tables, dispose_database, get_session_factory
@@ -23,6 +24,7 @@ from app.middleware import (
     RateLimitMiddleware,
     RequestIdMiddleware,
 )
+from app.services.knowledge_service import close_knowledge_runtime
 from app.services.seed_service import bootstrap_demo_data
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -43,9 +45,12 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         yield
     finally:
         try:
-            await close_redis()
+            await close_knowledge_runtime()
         finally:
-            await dispose_database()
+            try:
+                await close_redis()
+            finally:
+                await dispose_database()
 
 
 def create_app() -> FastAPI:
@@ -59,6 +64,7 @@ def create_app() -> FastAPI:
     )
     application.include_router(auth_router)
     application.include_router(customers_router)
+    application.include_router(knowledge_router)
     application.include_router(tickets_router)
     application.include_router(health_router)
 

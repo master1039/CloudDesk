@@ -769,11 +769,11 @@ uv run pytest tests/agents -vv
 # Workflow tests after Phase 10 begins
 uv run pytest tests/workflow -vv
 
-# Ingestion after P5-4 adds the command
+# Recreate and populate the knowledge index
 make ingest
 
 # Code-quality check
-uv run ruff check backend tests main.py
+uv run ruff check backend rag tests main.py
 ```
 
 The test harness blocks outbound network calls and selects fake/local providers. A passing offline test should not require a model API key, Qdrant Cloud, live Redis, or Supabase.
