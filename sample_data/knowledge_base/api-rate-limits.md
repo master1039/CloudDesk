@@ -1,7 +1,7 @@
 ---
 title: "Handle API rate limits"
 category: api_failure
-tags: [api, 429, retry]
+tags: [api, "429", retry]
 summary: "Recommended behavior after an HTTP 429 response."
 ---
 # Rate-limit responses

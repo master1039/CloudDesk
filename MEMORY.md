@@ -30,6 +30,9 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
 - P4-3 exposes viewer-protected customer list/detail reads. Customer detail returns the subscription,
   deterministic primary workspace, up to 10 ticket summaries without bodies, and up to 10 memory
   notes without fingerprints or internal attributes.
+- P5-1 validates the 15 Markdown knowledge articles and chunks them by Markdown heading. Final
+  indexable content, including the `"{title} - {heading}"` prefix, is capped at 900 characters with
+  150 characters of section-text overlap and deterministic chunk IDs/citation sources.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -134,15 +137,15 @@ Cases live in `datasets/eval_cases.json` and each case needs a valid `expected_c
 
 Update each row in place. Do not mark a row done from intention.
 
-| Surface | State on 2026-10-29 |
+| Surface | State on 2026-10-30 |
 |---|---|
-| Repository contents | Phases 1 through 4 are present: runtime, persistence, identity/request guards, and the ticket/customer support API. Agents, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P4-3. Viewers can list/filter/search and read tickets and customers; agents can also create unclassified tickets from all four F1 channels. Customer detail provides bounded F4 account context without raw ticket bodies or memory internals. HTTP, service, and repository responsibilities remain separated. |
-| Validated locally | 94 tests pass offline. Phase 4 covers authentication and RBAC, ticket/customer list filters, search, pagination, details and 404s, all four F1 creation channels, and F4 subscription/workspace/ticket-history/memory context. Ruff passes across backend, tests, and `main.py`. No live Redis, PostgreSQL, Supabase, or cloud service was exercised. |
+| Repository contents | Phases 1 through 4 are present, and Phase 5 has started with article loading and heading-aware chunking. Vector storage, retrieval, agents, the runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P4-3 and P5-1. The RAG package loads validated YAML front matter, preserves source metadata, and creates deterministic, cited 900/150 chunks with title/heading context. |
+| Validated locally | 106 tests pass offline. P5-1 validates all 15 articles, invalid metadata failures, heading sections, deterministic IDs and citations, and synthetic long-section 900/150 windows. Ruff passes across backend, `rag`, tests, and `main.py`. No embeddings, vector store, retrieval, live Redis, PostgreSQL, Supabase, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 4 are validated locally. Later phases are not started. |
+| Phase plan | Phases 1 through 4 are validated locally. Phase 5 is in progress with P5-1 completed; later phases are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
