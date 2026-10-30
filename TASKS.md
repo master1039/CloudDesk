@@ -76,7 +76,7 @@ Sub-tasks in the same phase that do not share files can be open at the same time
 |------|--------|--------|
 | P5-1 · Knowledge articles and chunking | `feature/rag-chunking` | Completed ✅ |
 | P5-2 · Vector store and fake embeddings | `feature/rag-vector-store` | Completed ✅ |
-| P5-3 · Hybrid retriever | `feature/rag-hybrid-retriever` | Pending ❌ |
+| P5-3 · Hybrid retriever | `feature/rag-hybrid-retriever` | Completed ✅ |
 | P5-4 · Ingest command and knowledge API | `feature/rag-ingest-api` | Pending ❌ |
 
 ---
@@ -263,7 +263,7 @@ Phases 4, 5, 6, and 7 start together once Phase 2 (and Phase 3, for Phase 4 only
 | 2 | Persistence and demo data | 4 | 4 |
 | 3 | Identity and request guards | 4 | 4 |
 | 4 | Support API | 3 | 3 |
-| 5 | Knowledge pipeline | 4 | 2 |
+| 5 | Knowledge pipeline | 4 | 3 |
 | 6 | Tools and mocks | 4 | 0 |
 | 7 | Rules and guardrails | 4 | 0 |
 | 8 | Memory | 3 | 0 |
@@ -273,4 +273,4 @@ Phases 4, 5, 6, and 7 start together once Phase 2 (and Phase 3, for Phase 4 only
 | 12 | Console shell | 4 | 0 |
 | 13 | Ticket workflow screen | 4 | 0 |
 | 14 | Evaluation and delivery | 5 | 0 |
-| **Total** | | **62** | **17** |
+| **Total** | | **62** | **18** |

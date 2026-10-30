@@ -237,7 +237,7 @@ BM25 ranks documents using term frequency, inverse document frequency, and docum
 
 CloudDesk combines semantic and keyword rankings instead of trusting one method.
 
-Planned flow:
+Implemented flow:
 
 ```text
 semantic results ∪ keyword results
@@ -264,7 +264,7 @@ Finally, one hit per article prevents several neighboring chunks from the same a
 
 ## 6.8 Retrieval modes
 
-The planned API supports:
+The retriever supports:
 
 - `semantic` — vector search only;
 - `keyword` — BM25 only;
@@ -292,7 +292,7 @@ This shape is important because the system can show what was retrieved, how stro
 
 ## 6.10 Retrieval caching
 
-Retrieval results will use a short Redis/fakeredis cache with a key shaped like:
+Retrieval results use an optional short Redis/fakeredis cache with a key shaped like:
 
 ```text
 rag:{mode}:{category}:{top_k}:{query}

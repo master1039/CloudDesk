@@ -37,6 +37,11 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   depends on one asynchronous vector-store protocol, while settings select either the concurrency-safe
   in-memory cosine store or the Qdrant adapter. Qdrant point IDs are stable UUIDs, and the original
   chunk ID plus citation metadata remain in the payload.
+- P5-3 implements semantic, BM25 keyword, and hybrid retrieval behind `HybridRetriever`. Hybrid mode
+  uses reciprocal-rank fusion with `k=60`, category/title heuristic boosts, an optional reranker that
+  can only reorder known evidence, and one result per article. Explicit metadata filters are hard
+  restrictions; ticket category is a soft ranking signal. Cacheable queries use the documented key
+  shape and a 300-second TTL.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -143,13 +148,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-10-30 |
 |---|---|
-| Repository contents | Phases 1 through 4 are present. Phase 5 now has article loading, heading-aware chunking, fake embeddings, and interchangeable memory/Qdrant vector storage. Hybrid retrieval, agents, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P4-3, P5-1, and P5-2. The RAG package creates deterministic cited chunks, normalized fake vectors, portable vector documents, and supports cosine search, metadata filters, upsert, delete, count, and health operations behind one protocol. |
-| Validated locally | 114 tests pass offline. P5-2 validates deterministic 384-dimensional embeddings and the complete store contract against the in-memory store and Qdrant embedded local mode. Ruff passes across backend, `rag`, tests, and `main.py`. No live Qdrant server, retrieval pipeline, live Redis, PostgreSQL, Supabase, or cloud service was exercised. |
+| Repository contents | Phases 1 through 4 are present. Phase 5 now has article loading, heading-aware chunking, fake embeddings, interchangeable memory/Qdrant vector storage, and hybrid retrieval. Ingestion commands/routes, agents, the runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P4-3 and P5-1 through P5-3. The RAG package supports deterministic cited chunks, fake vectors, portable storage, semantic and BM25 modes, RRF hybrid ranking, heuristic and optional reranking, metadata filters, article deduplication, structured evidence, and retrieval caching. |
+| Validated locally | 129 tests pass offline. P5-3 validates expected top-three articles for key queries, semantic/keyword/hybrid modes, RRF, category/title reranking, filters, citations, one result per article, optional reranking, and the 300-second cache contract. Ruff passes across backend, `rag`, tests, and `main.py`. No live Qdrant or Redis server, ingestion API, PostgreSQL, Supabase, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 4 are validated locally. Phase 5 is in progress with P5-1 and P5-2 completed; later phases are not started. |
+| Phase plan | Phases 1 through 4 are validated locally. Phase 5 is in progress with P5-1 through P5-3 completed; later phases are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 

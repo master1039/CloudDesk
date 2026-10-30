@@ -17,6 +17,19 @@ from .embeddings import (
     FakeEmbeddings,
     get_embedding_service,
 )
+from .retriever import (
+    DEFAULT_CANDIDATE_LIMIT,
+    RETRIEVAL_CACHE_TTL_SECONDS,
+    RRF_K,
+    Evidence,
+    EvidenceReranker,
+    HybridRetriever,
+    RetrievalCache,
+    RetrievalMode,
+    heuristic_rerank,
+    reciprocal_rank_fusion,
+    retrieval_cache_key,
+)
 from .vector_store import (
     InMemoryVectorStore,
     QdrantVectorStore,
@@ -30,15 +43,23 @@ from .vector_store import (
 
 __all__ = [
     "CHUNK_OVERLAP_CHARS",
+    "DEFAULT_CANDIDATE_LIMIT",
     "MAX_CHUNK_CHARS",
+    "RETRIEVAL_CACHE_TTL_SECONDS",
+    "RRF_K",
     "EmbeddingConfigurationError",
     "EmbeddingService",
+    "Evidence",
+    "EvidenceReranker",
     "FakeEmbeddings",
+    "HybridRetriever",
     "InMemoryVectorStore",
     "KnowledgeArticle",
     "KnowledgeArticleError",
     "KnowledgeChunk",
     "QdrantVectorStore",
+    "RetrievalCache",
+    "RetrievalMode",
     "VectorDocument",
     "VectorSearchResult",
     "VectorStoreConfigurationError",
@@ -47,8 +68,11 @@ __all__ = [
     "chunk_articles",
     "get_embedding_service",
     "get_vector_store",
+    "heuristic_rerank",
     "load_article_file",
     "load_article_files",
+    "reciprocal_rank_fusion",
+    "retrieval_cache_key",
     "vector_documents_from_chunks",
 ]
 
