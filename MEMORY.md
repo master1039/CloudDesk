@@ -46,6 +46,10 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   knowledge runtime lazily builds the configured index. SQL-backed viewer routes list and read
   published articles, viewer search returns cited evidence, and admin-only reindex recreates the
   vector collection, clears retrieval-cache entries, and atomically swaps the active index.
+- P6-1 establishes `ToolPolicy` as the deterministic F9 approval matrix and `ToolRegistry.execute`
+  as the only execution boundary. Async `@tool` registration is required; unknown or unclassified
+  capabilities default to approval-required, unregistered names never execute, timeouts use
+  `TOOL_TIMEOUT_SECONDS`, and exceptions become scrubbed `ToolResult` failures.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -150,15 +154,15 @@ Cases live in `datasets/eval_cases.json` and each case needs a valid `expected_c
 
 Update each row in place. Do not mark a row done from intention.
 
-| Surface | State on 2026-10-30 |
+| Surface | State on 2026-11-04 |
 |---|---|
-| Repository contents | Phases 1 through 5 are present. The knowledge pipeline includes validated articles, chunking, fake embeddings, memory/Qdrant vector adapters, hybrid retrieval, ingestion, browsing/search routes, and admin reindex. Agents, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P5-4. The completed RAG phase supports deterministic ingestion, portable vector storage, semantic/BM25/hybrid search, RRF and reranking, citations, filters, article deduplication, cache use/invalidation, SQL-backed article browsing, and collection recreation. |
-| Validated locally | 143 tests pass offline. P5-4 validates 15 articles and 30 indexed chunks, a measured hit-rate@3 above 0.75, all knowledge routes and transport contracts, viewer/admin RBAC, cache-safe reindex, in-memory replacement, and embedded-Qdrant collection recreation. Ruff checks pass across backend, `rag`, tests, and `main.py`. The exact `make ingest` recipe reported 15 articles and 30 chunks/vectors; GNU Make itself is unavailable on this Windows host. No live Qdrant/Redis, PostgreSQL, Supabase, or cloud service was exercised. |
+| Repository contents | Phases 1 through 5 are present, and Phase 6 has started with the tool policy and registry boundary. Concrete support tools, mock integrations, agents, the runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P5-4 and P6-1. The tool layer now has a deterministic policy matrix, async `@tool` registration, approval gates, allow-list enforcement, configurable timeouts, immutable registry discovery, and uniform scrubbed results. |
+| Validated locally | 162 tests pass offline. P6-1 validates the complete policy matrix, pre-execution refund blocking, approved execution on the shared path, conservative unknown-tool behavior, exception containment, timeout cancellation, async-only registration, and duplicate protection. Ruff checks pass across backend, `rag`, tests, and `main.py`. No concrete support tool, mock integration, live external service, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 5 are validated locally; later phases are not started. |
+| Phase plan | Phases 1 through 5 are validated locally. Phase 6 is in progress with P6-1 completed; later phases are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 

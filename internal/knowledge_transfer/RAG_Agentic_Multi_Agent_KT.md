@@ -15,14 +15,13 @@ It explains:
 
 ## 2. Honest starting point
 
-As of 29 October 2026, Phases 1–4 are implemented and validated locally. They provide the runtime, persistence, authentication, request guards, and ticket/customer APIs.
+As of 4 November 2026, Phases 1–5 are implemented and validated locally. Phase 6 has started with the deterministic tool policy and policy-enforced registry from P6-1.
 
 The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
-| Knowledge ingestion and RAG | Phase 5 | `rag/` and knowledge API files |
-| Tool registry and mock integrations | Phase 6 | `backend/app/tools/`, `integrations/` |
+| Concrete support tools and mock integrations | Phase 6 | `backend/app/tools/`, `integrations/` |
 | Rules and safety guardrails | Phase 7 | `agents/rules.py`, `agents/prompts.py`, `backend/app/core/guardrails.py` |
 | Short-term and long-term memory | Phase 8 | `memory/` |
 | Specialist agents and fake LLM | Phase 9 | `agents/specialists/`, `backend/app/core/llm.py` |
