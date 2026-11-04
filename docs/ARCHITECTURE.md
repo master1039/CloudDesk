@@ -64,6 +64,15 @@ flowchart TD
 
 Forbidden dependencies include repositories calling LLMs, agents writing SQL, API handlers containing policy, tools bypassing the registry, RAG importing ticket code, integrations imported by core, and frontend code holding backend secrets.
 
+## Secret-scrubbing boundary
+
+`backend.app.core.guardrails.scrub` is the deterministic N7 boundary for text that may later enter
+durable memory. It reuses the same centralized secret patterns as customer-output validation, checks
+payment-card candidates with Luhn, and removes complete private-key blocks and credential-bearing
+URLs. Matches are collected against the original input, overlapping spans are merged, and each span
+is replaced with the generic `[REDACTED]` marker. This keeps replacement stable and idempotent without
+returning or logging the matched secret. Future memory writers must call `scrub` before persistence.
+
 ## Tool execution boundary
 
 `ToolPolicy` classifies every known capability before execution. Read-only lookups, routine ticket

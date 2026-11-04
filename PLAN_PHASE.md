@@ -11,8 +11,8 @@ Status values: `not started`, `in progress`, `implemented`, `validated locally`.
 | 3 | Identity and request guards | validated locally |
 | 4 | Support API | validated locally |
 | 5 | Knowledge pipeline | validated locally |
-| 6 | Tools and policy | in progress |
-| 7 | Rules and guardrails | not started |
+| 6 | Tools and policy | validated locally |
+| 7 | Rules and guardrails | validated locally |
 | 8 | Specialist agents | not started |
 | 9 | Workflow graph and trace | not started |
 | 10 | Approval and escalation | not started |
@@ -125,6 +125,8 @@ Course documents 00–17 are not in this repo. This plan is the §19 phase plan 
 ### Phase 7 — Rules and guardrails
 
 **Goal.** Policy and safety are deterministic before any specialist calls a model.
+
+**Status.** Completed and validated locally on 2026-11-04 (P7-1 through P7-4).
 
 **Requirements.** F3 (rules), F10 (rule table), N4, N5, N7 (scrub function).
 

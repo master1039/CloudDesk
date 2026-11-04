@@ -90,6 +90,7 @@ class SecretPattern:
 
     signal: str
     pattern: str
+    redact_group: str | None = None
 
 
 SECRET_PATTERNS: tuple[SecretPattern, ...] = (
@@ -98,9 +99,14 @@ SECRET_PATTERNS: tuple[SecretPattern, ...] = (
     SecretPattern(
         "named_secret",
         r"\b(?:api[_ -]?key|access[_ -]?token|auth[_ -]?token|secret|password|passwd)\b"
-        r"\s*[:=]\s*(?!\[REDACTED\])[^\s,;]{8,}",
+        r"\s*[:=]\s*(?P<value>(?!\[REDACTED\])[^\s,;]{8,})",
+        redact_group="value",
     ),
-    SecretPattern("private_key", r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
+    SecretPattern(
+        "private_key",
+        r"-----BEGIN (?:(?:RSA|EC|OPENSSH) )?PRIVATE KEY-----[\s\S]*?"
+        r"(?:-----END (?:(?:RSA|EC|OPENSSH) )?PRIVATE KEY-----|$)",
+    ),
     SecretPattern(
         "jwt",
         r"\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b",
@@ -144,6 +150,7 @@ class CustomerOutputValidation:
 
 _URL_PATTERN = re.compile(r"\b(?:https?|ftp|file)://[^\s<>()]+", flags=re.IGNORECASE)
 _INTERNAL_HOST_SUFFIXES = (".internal", ".local", ".localhost", ".corp", ".lan")
+REDACTION_MARKER = "[REDACTED]"
 
 
 def _passes_luhn(candidate: str) -> bool:
@@ -184,6 +191,57 @@ def secret_signals(text: str) -> tuple[str, ...]:
             signals.append("url_credentials")
             break
     return tuple(signals)
+
+
+def _merge_spans(spans: Iterable[tuple[int, int]]) -> tuple[tuple[int, int], ...]:
+    merged: list[tuple[int, int]] = []
+    for start, end in sorted(spans):
+        if not merged or start > merged[-1][1]:
+            merged.append((start, end))
+            continue
+        previous_start, previous_end = merged[-1]
+        merged[-1] = previous_start, max(previous_end, end)
+    return tuple(merged)
+
+
+def _secret_spans(text: str) -> tuple[tuple[int, int], ...]:
+    spans: list[tuple[int, int]] = []
+    for candidate in SECRET_PATTERNS:
+        for match in re.finditer(candidate.pattern, text, flags=re.IGNORECASE):
+            if candidate.signal == "card_number" and not _passes_luhn(match.group(0)):
+                continue
+            spans.append(
+                match.span(candidate.redact_group)
+                if candidate.redact_group is not None
+                else match.span()
+            )
+
+    for match in _URL_PATTERN.finditer(text):
+        raw_url = match.group(0)
+        clean_url = raw_url.rstrip(".,;:!?\"'")
+        try:
+            parsed = urlsplit(clean_url)
+        except ValueError:
+            continue
+        if parsed.username or parsed.password:
+            spans.append((match.start(), match.start() + len(clean_url)))
+    return _merge_spans(spans)
+
+
+def scrub(text: str) -> str:
+    """Replace secrets with one generic marker without returning or logging matched values (N7)."""
+
+    spans = _secret_spans(text)
+    if not spans:
+        return text
+
+    parts: list[str] = []
+    cursor = 0
+    for start, end in spans:
+        parts.extend((text[cursor:start], REDACTION_MARKER))
+        cursor = end
+    parts.append(text[cursor:])
+    return "".join(parts)
 
 
 def _is_internal_url(raw_url: str) -> bool:
