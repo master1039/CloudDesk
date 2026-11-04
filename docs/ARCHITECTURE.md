@@ -74,6 +74,12 @@ human-approved path. It accepts only asynchronous LangChain `@tool` definitions,
 `TOOL_TIMEOUT_SECONDS`, and converts timeouts or exceptions into scrubbed `ToolResult` values so a
 tool adapter cannot crash the workflow.
 
+P6-2 registers five read-only capabilities through a dependency-injected factory. Customer and
+subscription lookups expose safe projections, ticket history is capped at ten and omits bodies and
+messages, document search reuses the cited hybrid retriever, and service status uses a replaceable
+`ServiceStatusProvider`. The default offline provider reads seeded incident records; P6-4 can supply
+the mock integration without changing tool names, policy, or execution flow.
+
 ## Ticket workflow
 
 ```mermaid

@@ -21,7 +21,7 @@ The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
-| Concrete support tools and mock integrations | Phase 6 | `backend/app/tools/`, `integrations/` |
+| Approval-gated write tools and mock integrations | Phase 6 | `backend/app/tools/`, `integrations/` |
 | Rules and safety guardrails | Phase 7 | `agents/rules.py`, `agents/prompts.py`, `backend/app/core/guardrails.py` |
 | Short-term and long-term memory | Phase 8 | `memory/` |
 | Specialist agents and fake LLM | Phase 9 | `agents/specialists/`, `backend/app/core/llm.py` |
@@ -406,7 +406,7 @@ When Phase 9 lands, read `backend/app/schemas/workflow.py` before reading prompt
 
 ## 10. Tools are capabilities, not ordinary helper functions
 
-Planned tools include:
+P6-2 implements the first five read-only tools below. The write tools remain planned for P6-3:
 
 | Tool | Reads or writes? | Approval required? |
 |---|---|---:|

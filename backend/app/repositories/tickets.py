@@ -141,14 +141,20 @@ class TicketRepository(BaseRepository[Ticket]):
         statement = self._page(statement, offset=0, limit=limit)
         return (await self.session.scalars(statement)).all()
 
-    async def list_for_customer(self, customer_id: str, *, limit: int = 10) -> Sequence[Ticket]:
+    async def list_for_customer(
+        self,
+        customer_id: str,
+        *,
+        exclude_ticket_id: str | None = None,
+        limit: int = 10,
+    ) -> Sequence[Ticket]:
         """Return bounded recent ticket history without loading message bodies."""
 
-        statement = (
-            select(Ticket)
-            .where(Ticket.customer_id == customer_id)
-            .options(selectinload(Ticket.customer))
-            .order_by(Ticket.created_at.desc(), Ticket.id.desc())
+        statement = select(Ticket).where(Ticket.customer_id == customer_id)
+        if exclude_ticket_id is not None:
+            statement = statement.where(Ticket.id != exclude_ticket_id)
+        statement = statement.options(selectinload(Ticket.customer)).order_by(
+            Ticket.created_at.desc(), Ticket.id.desc()
         )
         statement = self._page(statement, offset=0, limit=limit)
         return (await self.session.scalars(statement)).all()

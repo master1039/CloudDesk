@@ -89,7 +89,7 @@ Sub-tasks in the same phase that do not share files can be open at the same time
 | Task | Branch | Status |
 |------|--------|--------|
 | P6-1 · Tool registry and policy | `feature/tool-registry-policy` | Completed ✅ |
-| P6-2 · Read-only support tools | `feature/tools-read-only` | Pending ❌ |
+| P6-2 · Read-only support tools | `feature/tools-read-only` | Completed ✅ |
 | P6-3 · Approval-gated write tools | `feature/tools-approval-gated` | Pending ❌ |
 | P6-4 · Mock integrations | `feature/integrations-mock` | Pending ❌ |
 
@@ -264,7 +264,7 @@ Phases 4, 5, 6, and 7 start together once Phase 2 (and Phase 3, for Phase 4 only
 | 3 | Identity and request guards | 4 | 4 |
 | 4 | Support API | 3 | 3 |
 | 5 | Knowledge pipeline | 4 | 4 |
-| 6 | Tools and mocks | 4 | 1 |
+| 6 | Tools and mocks | 4 | 2 |
 | 7 | Rules and guardrails | 4 | 0 |
 | 8 | Memory | 3 | 0 |
 | 9 | Specialist agents | 8 | 0 |
@@ -273,4 +273,4 @@ Phases 4, 5, 6, and 7 start together once Phase 2 (and Phase 3, for Phase 4 only
 | 12 | Console shell | 4 | 0 |
 | 13 | Ticket workflow screen | 4 | 0 |
 | 14 | Evaluation and delivery | 5 | 0 |
-| **Total** | | **62** | **20** |
+| **Total** | | **62** | **21** |
