@@ -64,6 +64,16 @@ flowchart TD
 
 Forbidden dependencies include repositories calling LLMs, agents writing SQL, API handlers containing policy, tools bypassing the registry, RAG importing ticket code, integrations imported by core, and frontend code holding backend secrets.
 
+## Tool execution boundary
+
+`ToolPolicy` classifies every known capability before execution. Read-only lookups, routine ticket
+updates, and the safe escalation path do not need approval; refund requests and workspace-setting
+resets do. Unclassified registered extensions default to approval-required, while unregistered names
+never execute. `ToolRegistry.execute(name, args, approved=...)` is the shared automatic and
+human-approved path. It accepts only asynchronous LangChain `@tool` definitions, enforces
+`TOOL_TIMEOUT_SECONDS`, and converts timeouts or exceptions into scrubbed `ToolResult` values so a
+tool adapter cannot crash the workflow.
+
 ## Ticket workflow
 
 ```mermaid
