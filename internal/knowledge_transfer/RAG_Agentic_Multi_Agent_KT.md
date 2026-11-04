@@ -15,13 +15,12 @@ It explains:
 
 ## 2. Honest starting point
 
-As of 4 November 2026, Phases 1–5 are implemented and validated locally. Phase 6 has started with the deterministic tool policy and policy-enforced registry from P6-1.
+As of 4 November 2026, Phases 1–6 are implemented and validated locally. Phase 6 provides the deterministic tool policy, all nine support tools, approval-gated writes, and offline mock integrations.
 
 The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
-| Approval-gated write tools and mock integrations | Phase 6 | `backend/app/tools/`, `integrations/` |
 | Rules and safety guardrails | Phase 7 | `agents/rules.py`, `agents/prompts.py`, `backend/app/core/guardrails.py` |
 | Short-term and long-term memory | Phase 8 | `memory/` |
 | Specialist agents and fake LLM | Phase 9 | `agents/specialists/`, `backend/app/core/llm.py` |
@@ -419,6 +418,11 @@ P6-2 implements the first five read-only tools below, and P6-3 implements the fo
 | `reset_demo_setting` | write | yes |
 | `create_refund_request` | write | yes |
 | `create_escalation` | safe routing write | no |
+
+P6-4 supplies deterministic in-memory adapters behind the tool protocols. The billing mock records an
+idempotent request but never moves money, the workspace mock changes only process memory, and the
+status mock reads checked-in incidents without making a network call. Outside demo mode, the factory
+fails closed because real providers are intentionally not implemented in v1.
 
 Every tool execution must pass through `ToolRegistry.execute(...)`.
 

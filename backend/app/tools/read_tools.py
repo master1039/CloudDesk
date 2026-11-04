@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Annotated, Any, Literal, Protocol, runtime_checkable
+from typing import Annotated, Any, Literal
 
 from app.core.config import Settings, get_settings
 from app.core.database import get_session_factory
@@ -17,18 +17,13 @@ from langchain_core.tools import BaseTool, tool
 from pydantic import Field
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from integrations.protocols import ServiceStatusProvider
+
 from .policy import ToolPolicy
 from .registry import ToolRegistry
 
 type SessionFactory = async_sessionmaker[AsyncSession]
 type RetrievalMode = Literal["hybrid", "semantic", "keyword"]
-
-
-@runtime_checkable
-class ServiceStatusProvider(Protocol):
-    """Dependency supplied by the repository today and mock integrations in P6-4."""
-
-    async def check_service_status(self, service: str | None = None) -> Mapping[str, Any]: ...
 
 
 def _iso(value: datetime | None) -> str | None:

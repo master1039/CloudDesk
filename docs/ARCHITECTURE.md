@@ -77,15 +77,21 @@ tool adapter cannot crash the workflow.
 P6-2 registers five read-only capabilities through a dependency-injected factory. Customer and
 subscription lookups expose safe projections, ticket history is capped at ten and omits bodies and
 messages, document search reuses the cited hybrid retriever, and service status uses a replaceable
-`ServiceStatusProvider`. The default offline provider reads seeded incident records; P6-4 can supply
-the mock integration without changing tool names, policy, or execution flow.
+`ServiceStatusProvider`. The repository-backed provider can read seeded incidents without changing
+tool names, policy, or execution flow.
 
 P6-3 adds four write capabilities on the same boundary. `update_ticket` limits routine mutations to
 status, category, severity, and summary. `create_escalation` transactionally creates the safe fallback,
 marks the ticket escalated, and reuses an identical open escalation. Refund requests and demo-setting
 resets delegate to injected provider protocols only after `ToolRegistry.execute(..., approved=True)`
-passes policy; missing P6-4 providers fail as scrubbed results rather than performing a fallback side
-effect. Money uses `Decimal`, and refund calls require an idempotency key.
+passes policy. Money uses `Decimal`, and refund calls require an idempotency key.
+
+P6-4 implements those protocols with deterministic, stateful in-memory mocks. Refund requests use
+stable IDs and reject conflicting idempotency-key reuse while explicitly reporting that no money was
+moved. Workspace changes remain in process and report that no external account changed. Service
+status loads validated checked-in incidents. `create_integrations` selects this provider set only in
+demo mode and otherwise fails closed; `create_support_tool_registry` composes all nine tools around
+one provider set and one `ToolRegistry` execution boundary.
 
 ## Ticket workflow
 
