@@ -73,6 +73,10 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   and context-supplied identifiers belonging to other customers produce generic violation codes and
   `high` risk without echoing matched values. Public documentation URLs and the current customer's
   identifiers remain allowed. Secret classes are centralized for reuse by P7-4 scrubbing.
+- P7-4 adds the N7 `scrub` boundary for future durable memory. It reuses centralized secret patterns,
+  validates payment-card candidates with Luhn, removes complete private-key blocks and credential URLs,
+  merges overlapping spans, and emits only the generic `[REDACTED]` marker. Scrubbing is deterministic
+  and idempotent, and benign support text is preserved.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -179,13 +183,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-11-04 |
 |---|---|
-| Repository contents | Phases 1 through 6 are present. Phase 7 now includes deterministic escalation/severity policy, injection containment, and customer-output validation. Specialist agents, secret scrubbing, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P6-4 plus P7-1 through P7-3. Policy routes without a model, severity only raises, untrusted prompts are contained, and unsafe customer-visible text receives a structured high-risk failure. |
-| Validated locally | 235 tests pass offline. P7-3 validates safe public replies, internal/local/private URL blocking, seven secret classes, cross-customer identifier blocking without value leakage, current-customer allowance, deduplicated multi-findings, empty-output rejection, and benign support text. Ruff checks pass across backend, `integrations`, `agents`, `rag`, tests, and `main.py`. No LLM call, live external service, or cloud service was exercised. |
+| Repository contents | Phases 1 through 7 are present. Phase 7 includes deterministic escalation/severity policy, injection containment, customer-output validation, and secret scrubbing. Specialist agents, the runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P7-4. Policy routes without a model, severity only raises, untrusted prompts are contained, unsafe customer-visible text receives a structured high-risk failure, and secret-like material is scrubbed before future durable storage. |
+| Validated locally | 253 tests pass offline. P7-4 validates API/AWS keys, passwords, JWTs, Luhn-valid card numbers, credential URLs, complete private-key blocks, overlapping matches, stable repeated replacements, idempotency, and preservation of benign content. Ruff checks pass across backend, `integrations`, `agents`, `rag`, tests, and `main.py`. No LLM call, live external service, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 6 are validated locally. Phase 7 is in progress with P7-1 through P7-3 completed; P7-4 remains pending. Later phases are not started. |
+| Phase plan | Phases 1 through 7 are validated locally. Later phases are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
