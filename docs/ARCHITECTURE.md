@@ -93,6 +93,17 @@ status loads validated checked-in incidents. `create_integrations` selects this 
 demo mode and otherwise fails closed; `create_support_tool_registry` composes all nine tools around
 one provider set and one `ToolRegistry` execution boundary.
 
+## Deterministic escalation and severity policy
+
+P7-1 places model-independent safety policy in `agents/rules.py`. One ordered immutable rule table
+covers security incidents, data loss, account deletion, payment disputes, explicit legal requests,
+and enterprise-wide outages. Every rule names its destination team, explanation, and minimum
+severity. `matching_escalation_rules` returns all policy evidence in stable routing order, while
+`policy_escalation` uses the first match for ownership and the highest matched severity for priority.
+`rule_severity` can raise a model assessment to that deterministic minimum but can never lower it.
+This keeps mandatory routing explainable and leaves only unmatched grey areas for later model
+judgement.
+
 ## Ticket workflow
 
 ```mermaid
