@@ -77,6 +77,10 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   validates payment-card candidates with Luhn, removes complete private-key blocks and credential URLs,
   merges overlapping spans, and emits only the generic `[REDACTED]` marker. Scrubbing is deterministic
   and idempotent, and benign support text is preserved.
+- P8-1 adds the short-term Redis/fakeredis facade for F4/F11. Conversations use ticket-scoped Redis
+  lists for ordered atomic appends, workflow state uses JSON strings, and every write applies or
+  refreshes a 24-hour TTL. Ticket identifiers are constrained before key construction, dependencies
+  are injected for offline tests, and one-ticket cleanup cannot remove another ticket's state.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -183,13 +187,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-11-04 |
 |---|---|
-| Repository contents | Phases 1 through 7 are present. Phase 7 includes deterministic escalation/severity policy, injection containment, customer-output validation, and secret scrubbing. Specialist agents, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P7-4. Policy routes without a model, severity only raises, untrusted prompts are contained, unsafe customer-visible text receives a structured high-risk failure, and secret-like material is scrubbed before future durable storage. |
-| Validated locally | 253 tests pass offline. P7-4 validates API/AWS keys, passwords, JWTs, Luhn-valid card numbers, credential URLs, complete private-key blocks, overlapping matches, stable repeated replacements, idempotency, and preservation of benign content. Ruff checks pass across backend, `integrations`, `agents`, `rag`, tests, and `main.py`. No LLM call, live external service, or cloud service was exercised. |
+| Repository contents | Phases 1 through 7 are present, and Phase 8 memory work has started with the short-term Redis facade. Long-term customer memory, recall/record orchestration, specialist agents, the runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P7-4 plus P8-1. Ticket conversations and workflow state are isolated behind a Redis/fakeredis facade with deterministic JSON serialization, cleanup, and a sliding 24-hour TTL. |
+| Validated locally | 263 tests pass offline. P8-1 validates ordered conversation append, ticket isolation, JSON workflow-state replacement, 24-hour TTL application and refresh, cleanup, malformed ephemeral-data handling, namespace validation, and serialization failures. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No LLM call, live external service, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 7 are validated locally. Later phases are not started. |
+| Phase plan | Phases 1 through 7 are validated locally. The pulled-forward Phase 8 memory track is in progress with P8-1 complete; P8-2 and P8-3 remain pending. Other later phases are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 

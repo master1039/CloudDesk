@@ -176,6 +176,13 @@ Primary tables are `profiles`, `customers`, `subscriptions`, `workspaces`, `prod
 - Short-term ticket state and retrieval caching live in Redis/fakeredis.
 - Knowledge vectors live in Qdrant or the in-memory implementation behind `VectorStoreService`.
 
+P8-1 places short-term conversation and workflow context behind `memory.ShortTermMemory`. Conversation
+messages are appended in order to ticket-scoped Redis lists, while the latest workflow snapshot is a
+ticket-scoped JSON string. Every write applies or refreshes a 24-hour TTL. The facade validates ticket
+identifiers before constructing keys, tolerates malformed ephemeral entries without crossing ticket
+boundaries, supports explicit per-ticket cleanup, and accepts the shared Redis client or fakeredis by
+dependency injection.
+
 ## Security boundaries
 
 - Bearer JWT establishes identity; `require_role` enforces `viewer < agent < admin`.
