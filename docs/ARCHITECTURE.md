@@ -80,6 +80,13 @@ messages, document search reuses the cited hybrid retriever, and service status 
 `ServiceStatusProvider`. The default offline provider reads seeded incident records; P6-4 can supply
 the mock integration without changing tool names, policy, or execution flow.
 
+P6-3 adds four write capabilities on the same boundary. `update_ticket` limits routine mutations to
+status, category, severity, and summary. `create_escalation` transactionally creates the safe fallback,
+marks the ticket escalated, and reuses an identical open escalation. Refund requests and demo-setting
+resets delegate to injected provider protocols only after `ToolRegistry.execute(..., approved=True)`
+passes policy; missing P6-4 providers fail as scrubbed results rather than performing a fallback side
+effect. Money uses `Decimal`, and refund calls require an idempotency key.
+
 ## Ticket workflow
 
 ```mermaid

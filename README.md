@@ -2,7 +2,7 @@
 
 CloudDesk is an autonomous customer-support and resolution platform for a fictional SaaS product. It helps support agents understand tickets, retrieve evidence, troubleshoot issues, propose grounded replies, and safely execute or escalate resolutions. Money and account changes always require recorded human approval.
 
-The repository currently includes validated runtime, persistence/demo-data, identity/request guards, support APIs, the complete offline knowledge pipeline, deterministic tool policy, and five registry-enforced read-only support tools. Approval-gated write tools, mock integrations, agents, the frontend, containers, CI, and cloud infrastructure remain planned. See [MEMORY.md](MEMORY.md) for the honest current status.
+The repository currently includes validated runtime, persistence/demo-data, identity/request guards, support APIs, the complete offline knowledge pipeline, deterministic tool policy, and registry-enforced read and write support tools. Mock integrations, agents, the frontend, containers, CI, and cloud infrastructure remain planned. See [MEMORY.md](MEMORY.md) for the honest current status.
 
 ## Target stack
 
