@@ -183,6 +183,13 @@ identifiers before constructing keys, tolerates malformed ephemeral entries with
 boundaries, supports explicit per-ticket cleanup, and accepts the shared Redis client or fakeredis by
 dependency injection.
 
+P8-2 makes `memory.LongTermMemory` the application write boundary for durable customer notes. Content
+is scrubbed before storage and SHA-256 fingerprinting; the existing unique constraint on customer,
+memory type, and fingerprint suppresses exact duplicates. Source tickets and workflows must belong to
+the same customer, and an exact raw source-ticket body is rejected. Recall returns at most ten newest
+notes through a projection that excludes fingerprints and internal attributes. The caller retains
+transaction ownership so later workflow orchestration can commit all memory updates atomically.
+
 ## Security boundaries
 
 - Bearer JWT establishes identity; `require_role` enforces `viewer < agent < admin`.
