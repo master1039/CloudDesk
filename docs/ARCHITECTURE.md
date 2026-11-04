@@ -171,7 +171,12 @@ Primary tables are `profiles`, `customers`, `subscriptions`, `workspaces`, `prod
 
 - Bearer JWT establishes identity; `require_role` enforces `viewer < agent < admin`.
 - Request-ID, rate-limit, and audit middleware apply to API traffic; every non-GET request is audited.
-- Customer-controlled content is delimited with `wrap_untrusted` and scanned for injection patterns.
+- Customer-controlled content is scanned by deterministic N4 patterns before model use. The scanner
+  normalizes Unicode and zero-width obfuscation and returns stable signal names for auditability.
+- `wrap_untrusted` XML-escapes content and source labels inside one `<untrusted_content>` block, so
+  injected closing tags cannot escape the data boundary. Every future specialist prompt shares
+  `SECURITY_PREAMBLE`, which forbids obeying embedded instructions, revealing prompts or secrets,
+  invoking tools, or changing workflow routing because customer-controlled text asks.
 - Customer-facing output is blocked if it contains secrets, internal URLs, or another customer's data.
 - Refunds, deletions, disputes, and workspace-setting changes cannot execute without the defined approval/escalation policy.
 - Secrets are server-side environment values only and never enter logs, prompts exposed to operators, memory notes, frontend bundles, or Git.

@@ -15,13 +15,13 @@ It explains:
 
 ## 2. Honest starting point
 
-As of 4 November 2026, Phases 1–6 are implemented and validated locally. Phase 7 has started with deterministic escalation and raise-only severity rules from P7-1.
+As of 4 November 2026, Phases 1–6 are implemented and validated locally. Phase 7 now includes deterministic escalation/severity rules and prompt-injection containment from P7-1 and P7-2.
 
 The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
-| Remaining safety guardrails | Phase 7 (P7-2 to P7-4) | `agents/prompts.py`, `backend/app/core/guardrails.py` |
+| Remaining safety guardrails | Phase 7 (P7-3 to P7-4) | `backend/app/core/guardrails.py` |
 | Short-term and long-term memory | Phase 8 | `memory/` |
 | Specialist agents and fake LLM | Phase 9 | `agents/specialists/`, `backend/app/core/llm.py` |
 | LangGraph workflow and tracing | Phase 10 | `agents/graph.py`, `agents/nodes/`, workflow services |
