@@ -406,7 +406,7 @@ When Phase 9 lands, read `backend/app/schemas/workflow.py` before reading prompt
 
 ## 10. Tools are capabilities, not ordinary helper functions
 
-P6-2 implements the first five read-only tools below. The write tools remain planned for P6-3:
+P6-2 implements the first five read-only tools below, and P6-3 implements the four controlled write tools:
 
 | Tool | Reads or writes? | Approval required? |
 |---|---|---:|

@@ -54,6 +54,11 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   and subscription projections, body-free ticket history with current-ticket exclusion, cited RAG
   search, and service-status checks. Status access is dependency-injected so P6-4 can replace the
   repository-backed offline provider without changing agents or registry execution.
+- P6-3 adds four controlled writes through `create_write_tool_registry`. Routine ticket updates are
+  field-limited, escalation creation is transactional and idempotent for an identical open escalation,
+  and refund/workspace actions cannot reach injected providers until the registry receives explicit
+  approval. Refund amounts use `Decimal` and require an idempotency key; P6-4 still owns provider
+  implementations.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -160,13 +165,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-11-04 |
 |---|---|
-| Repository contents | Phases 1 through 5 are present. Phase 6 now includes the policy/registry boundary and five read-only support tools. Approval-gated write tools, mock integrations, agents, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P5-4 plus P6-1 and P6-2. Read tools expose bounded customer, subscription, ticket-history, cited-document, and service-status context only through `ToolRegistry.execute`. |
-| Validated locally | 171 tests pass offline. P6-2 validates all five registrations, no-approval policy, bounded safe projections, current-ticket exclusion, cited hybrid search, active/operational service status, not-found behavior, input constraints, and P6-4 provider injection. Ruff checks pass across backend, `rag`, tests, and `main.py`. Service status used seeded repository incidents; no P6-4 mock integration, write tool, live external service, or cloud service was exercised. |
+| Repository contents | Phases 1 through 5 are present. Phase 6 now includes the policy/registry boundary plus read-only and controlled write support tools. Mock integrations, agents, the runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P5-4 plus P6-1 through P6-3. Read tools expose bounded context; write tools provide field-limited ticket updates, safe idempotent escalation, and approval-gated refund/workspace provider calls, all through `ToolRegistry.execute`. |
+| Validated locally | 177 tests pass offline. P6-3 validates routine ticket persistence, resolved timestamps, missing/empty update failures, transactional idempotent escalation, explicit approval for refund and workspace actions, zero provider calls before approval, and scrubbed failure when a provider is unavailable. Ruff checks pass across backend, `rag`, tests, and `main.py`. No P6-4 mock integration, live external service, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 5 are validated locally. Phase 6 is in progress with P6-1 and P6-2 completed; P6-3 and P6-4 remain pending. Later phases are not started. |
+| Phase plan | Phases 1 through 5 are validated locally. Phase 6 is in progress with P6-1 through P6-3 completed; P6-4 remains pending. Later phases are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
