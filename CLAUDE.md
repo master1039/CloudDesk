@@ -544,12 +544,12 @@ this file. Stage 17 is optional and is not a core exit criterion.
 | Phase | Name | Status |
 |---|---|---|
 | 1 | Runtime skeleton | validated locally |
-| 2 | Persistence and demo data | in progress |
-| 3 | Identity and request guards | not started |
-| 4 | Support API | not started |
-| 5 | Knowledge pipeline | not started |
-| 6 | Tools and policy | not started |
-| 7 | Rules and guardrails | not started |
+| 2 | Persistence and demo data | validated locally |
+| 3 | Identity and request guards | validated locally |
+| 4 | Support API | validated locally |
+| 5 | Knowledge pipeline | validated locally |
+| 6 | Tools and policy | validated locally |
+| 7 | Rules and guardrails | in progress |
 | 8 | Specialist agents | not started |
 | 9 | Workflow graph and trace | not started |
 | 10 | Approval and escalation | not started |
