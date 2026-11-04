@@ -553,7 +553,7 @@ this file. Stage 17 is optional and is not a core exit criterion.
 | 8 | Specialist agents | not started |
 | 9 | Workflow graph and trace | not started |
 | 10 | Approval and escalation | not started |
-| 11 | Memory | not started |
+| 11 | Memory | in progress |
 | 12 | Agent console | not started |
 | 13 | Evaluation and delivery | not started |
 

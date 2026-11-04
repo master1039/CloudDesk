@@ -118,7 +118,7 @@ Sub-tasks in the same phase that do not share files can be open at the same time
 |------|--------|--------|
 | P8-1 · Short-term Redis facade | `feature/memory-short-term` | Completed ✅ |
 | P8-2 · Long-term customer memory | `feature/memory-long-term` | Completed ✅ |
-| P8-3 · Recall and record service | `feature/memory-service` | Pending ❌ |
+| P8-3 · Recall and record service | `feature/memory-service` | Completed ✅ |
 
 ---
 
@@ -266,11 +266,11 @@ Phases 4, 5, 6, and 7 start together once Phase 2 (and Phase 3, for Phase 4 only
 | 5 | Knowledge pipeline | 4 | 4 |
 | 6 | Tools and mocks | 4 | 4 |
 | 7 | Rules and guardrails | 4 | 4 |
-| 8 | Memory | 3 | 2 |
+| 8 | Memory | 3 | 3 |
 | 9 | Specialist agents | 8 | 0 |
 | 10 | Workflow graph and trace | 6 | 0 |
 | 11 | Approval and escalation | 5 | 0 |
 | 12 | Console shell | 4 | 0 |
 | 13 | Ticket workflow screen | 4 | 0 |
 | 14 | Evaluation and delivery | 5 | 0 |
-| **Total** | | **62** | **29** |
+| **Total** | | **62** | **30** |

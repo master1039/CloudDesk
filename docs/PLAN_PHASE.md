@@ -16,7 +16,7 @@ Status values: `not started`, `in progress`, `implemented`, `validated locally`.
 | 8 | Specialist agents | not started |
 | 9 | Workflow graph and trace | not started |
 | 10 | Approval and escalation | not started |
-| 11 | Memory | not started |
+| 11 | Memory | in progress |
 | 12 | Agent console | not started |
 | 13 | Evaluation and delivery | not started |
 
@@ -191,6 +191,9 @@ Course documents 00–17 are not in this repo. This plan is the §19 phase plan 
 ### Phase 11 — Memory
 
 **Goal.** Every completed run recalls prior notes and writes scrubbed, de-duplicated memory.
+
+**Status.** Memory facades and recall/record orchestration are validated locally; graph-node wiring
+remains pending until the workflow phase.
 
 **Requirements.** F4 (notes), F11 (write), N7.
 

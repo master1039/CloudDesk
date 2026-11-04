@@ -86,6 +86,10 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   returns the existing note for exact duplicates. Recall is newest-first and capped at 10. Safe note
   projections omit fingerprints and attributes; source ticket/workflow ownership is verified, and raw
   source-ticket bodies are rejected before persistence.
+- P8-3 adds the workflow-facing F4/F11 memory service. `recall_customer` returns at most 10 safe notes;
+  `record_resolution` atomically writes one past-issue note, one numbered troubleshooting note capped
+  at the first three non-blank steps, and one resolution note. Replays reuse the same rows through the
+  long-term fingerprint boundary, and invalid input rolls the complete service write back.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -192,13 +196,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-11-04 |
 |---|---|
-| Repository contents | Phases 1 through 7 are present, and Phase 8 memory work includes both short-term Redis state and durable customer notes. Recall/record orchestration, specialist agents, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P7-4 plus P8-1 and P8-2. Durable notes are scrubbed, fingerprinted, de-duplicated, customer-scoped, newest-first, and exposed through a projection that omits internal metadata. |
-| Validated locally | 269 tests pass offline. P8-2 validates secret scrubbing, exact-duplicate suppression, type/customer isolation, ten-note recall limits, newest-first ordering, source ownership, raw-ticket-body rejection, invalid inputs, and transaction-safe SQL persistence. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No LLM call, live external service, or cloud service was exercised. |
+| Repository contents | Phases 1 through 7 are present, and the pulled-forward Phase 8 memory track includes short-term Redis state, durable customer notes, and recall/record orchestration. Specialist agents, graph-node integration, the runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P8-3. Memory can recall a bounded safe customer history and atomically record the past issue, first three troubleshooting steps, and resolution note without duplicating a replayed run. |
+| Validated locally | 276 tests pass offline. P8-3 validates three-group recording, three-step bounding, secret scrubbing, source attribution, replay idempotency, ten-note recall, safe projections, structured-step validation, and complete rollback on invalid input. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No LLM call, live external service, graph node, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 7 are validated locally. The pulled-forward Phase 8 memory track is in progress with P8-1 and P8-2 complete; P8-3 remains pending. Other later phases are not started. |
+| Phase plan | Phases 1 through 7 and the pulled-forward P8-1 through P8-3 memory tasks are validated locally. Original Phase 11 memory remains in progress until its future graph nodes call the service. Other later phases are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
