@@ -15,13 +15,12 @@ It explains:
 
 ## 2. Honest starting point
 
-As of 4 November 2026, Phases 1–7 are implemented and validated locally. The pulled-forward Phase 8 memory track now includes short-term Redis/fakeredis state and scrubbed, de-duplicated long-term customer notes from P8-1 and P8-2.
+As of 4 November 2026, Phases 1–7 and the pulled-forward P8-1 through P8-3 memory track are implemented and validated locally. Memory now includes short-term Redis/fakeredis state, scrubbed de-duplicated durable notes, bounded recall, and atomic resolution recording. Graph-node integration remains future work.
 
 The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
-| Recall/record memory orchestration | Phase 8 (P8-3) | `memory/memory_service.py` |
 | Specialist agents and fake LLM | Phase 9 | `agents/specialists/`, `backend/app/core/llm.py` |
 | LangGraph workflow and tracing | Phase 10 | `agents/graph.py`, `agents/nodes/`, workflow services |
 | Human approval and escalation | Phase 11 | approval services, graph interrupts, action execution |

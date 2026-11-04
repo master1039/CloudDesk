@@ -190,6 +190,12 @@ the same customer, and an exact raw source-ticket body is rejected. Recall retur
 notes through a projection that excludes fingerprints and internal attributes. The caller retains
 transaction ownership so later workflow orchestration can commit all memory updates atomically.
 
+P8-3 exposes `recall_customer` and `record_resolution` through `memory.MemoryService` for future graph
+nodes. Recall remains capped at ten notes. Resolution recording uses one savepoint to write a past
+issue, one numbered troubleshooting note containing at most the first three non-blank steps, and one
+resolution note. Any failure rolls back the group, while replaying identical content reuses existing
+fingerprinted rows. The graph-node calls themselves remain pending with the workflow phase.
+
 ## Security boundaries
 
 - Bearer JWT establishes identity; `require_role` enforces `viewer < agent < admin`.
