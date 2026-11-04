@@ -8,6 +8,7 @@ from .read_tools import (
     create_read_tools,
 )
 from .registry import ToolErrorCode, ToolRegistry, ToolResult
+from .support_tools import create_support_tool_registry
 from .write_tools import (
     BillingProvider,
     WorkspaceAdminProvider,
@@ -31,6 +32,7 @@ __all__ = [
     "WriteToolDependencyError",
     "create_read_tool_registry",
     "create_read_tools",
+    "create_support_tool_registry",
     "create_write_tool_registry",
     "create_write_tools",
 ]

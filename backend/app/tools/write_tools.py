@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Annotated, Any, Protocol, runtime_checkable
+from typing import Annotated, Any
 
 from app.core.config import Settings, get_settings
 from app.core.database import get_session_factory
@@ -16,41 +15,13 @@ from langchain_core.tools import BaseTool, tool
 from pydantic import Field
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from integrations.protocols import BillingProvider, JsonScalar, WorkspaceAdminProvider
+
 from .policy import ToolPolicy
 from .registry import ToolRegistry
 
 type SessionFactory = async_sessionmaker[AsyncSession]
-type JsonScalar = str | int | float | bool | None
 type PolicyRule = Annotated[str, Field(min_length=1, max_length=120)]
-
-
-@runtime_checkable
-class WorkspaceAdminProvider(Protocol):
-    """Provider boundary for approval-gated workspace administration."""
-
-    async def reset_demo_setting(
-        self,
-        *,
-        workspace_id: str,
-        setting: str,
-        value: JsonScalar,
-    ) -> Mapping[str, Any]: ...
-
-
-@runtime_checkable
-class BillingProvider(Protocol):
-    """Provider boundary for approval-gated billing requests."""
-
-    async def create_refund_request(
-        self,
-        *,
-        ticket_id: str,
-        customer_id: str,
-        amount: Decimal,
-        currency: str,
-        reason: str,
-        idempotency_key: str,
-    ) -> Mapping[str, Any]: ...
 
 
 class WriteToolDependencyError(RuntimeError):

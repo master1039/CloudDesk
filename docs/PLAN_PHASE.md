@@ -108,6 +108,8 @@ Course documents 00–17 are not in this repo. This plan is the §19 phase plan 
 
 **Goal.** Every side effect the agents can take is a registered tool with an explicit approval bit.
 
+**Status.** Completed and validated locally on 2026-11-04 (P6-1 through P6-4).
+
 **Requirements.** F9 (policy half).
 
 **Files.** `backend/app/tools/` (`policy.py`, registry, tool functions), `integrations/protocols.py`, `integrations/mock/services.py`, `integrations/factory.py`.
