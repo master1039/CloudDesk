@@ -104,7 +104,7 @@ Sub-tasks in the same phase that do not share files can be open at the same time
 |------|--------|--------|
 | P7-1 · Escalation and severity rules | `feature/policy-rules` | Completed ✅ |
 | P7-2 · Injection wrapping and security preamble | `feature/guardrail-injection` | Completed ✅ |
-| P7-3 · Customer output validation | `feature/guardrail-output-validation` | Pending ❌ |
+| P7-3 · Customer output validation | `feature/guardrail-output-validation` | Completed ✅ |
 | P7-4 · Secret scrub | `feature/guardrail-secret-scrub` | Pending ❌ |
 
 ---
@@ -265,7 +265,7 @@ Phases 4, 5, 6, and 7 start together once Phase 2 (and Phase 3, for Phase 4 only
 | 4 | Support API | 3 | 3 |
 | 5 | Knowledge pipeline | 4 | 4 |
 | 6 | Tools and mocks | 4 | 4 |
-| 7 | Rules and guardrails | 4 | 2 |
+| 7 | Rules and guardrails | 4 | 3 |
 | 8 | Memory | 3 | 0 |
 | 9 | Specialist agents | 8 | 0 |
 | 10 | Workflow graph and trace | 6 | 0 |
@@ -273,4 +273,4 @@ Phases 4, 5, 6, and 7 start together once Phase 2 (and Phase 3, for Phase 4 only
 | 12 | Console shell | 4 | 0 |
 | 13 | Ticket workflow screen | 4 | 0 |
 | 14 | Evaluation and delivery | 5 | 0 |
-| **Total** | | **62** | **25** |
+| **Total** | | **62** | **26** |

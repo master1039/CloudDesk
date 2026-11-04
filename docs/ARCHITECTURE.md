@@ -177,7 +177,10 @@ Primary tables are `profiles`, `customers`, `subscriptions`, `workspaces`, `prod
   injected closing tags cannot escape the data boundary. Every future specialist prompt shares
   `SECURITY_PREAMBLE`, which forbids obeying embedded instructions, revealing prompts or secrets,
   invoking tools, or changing workflow routing because customer-controlled text asks.
-- Customer-facing output is blocked if it contains secrets, internal URLs, or another customer's data.
+- Customer-facing output receives a structured validation result before display. Empty output,
+  internal/private URLs, secret classes, and explicitly supplied other-customer identifiers produce
+  generic violation codes without echoing matched data; every failure is invalid and `high` risk.
+  Public documentation links and identifiers belonging to the current customer remain allowed.
 - Refunds, deletions, disputes, and workspace-setting changes cannot execute without the defined approval/escalation policy.
 - Secrets are server-side environment values only and never enter logs, prompts exposed to operators, memory notes, frontend bundles, or Git.
 

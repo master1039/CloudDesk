@@ -69,6 +69,10 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   and reports stable strong-signal names; `wrap_untrusted` escapes content and source attributes so
   customer text cannot close its delimiter. `SECURITY_PREAMBLE` forbids embedded instructions from
   revealing prompts, invoking tools, changing actions, or altering workflow routing.
+- P7-3 adds the N5 customer-output gate. Empty output, internal/private URLs, secret-like material,
+  and context-supplied identifiers belonging to other customers produce generic violation codes and
+  `high` risk without echoing matched values. Public documentation URLs and the current customer's
+  identifiers remain allowed. Secret classes are centralized for reuse by P7-4 scrubbing.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -175,13 +179,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-11-04 |
 |---|---|
-| Repository contents | Phases 1 through 6 are present. Phase 7 now includes deterministic escalation/severity policy and prompt-injection containment. Specialist agents, output validation, secret scrubbing, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P6-4 plus P7-1 and P7-2. Policy cases route without a model, severity rules only raise assessments, suspicious external text is flagged, and all customer-controlled prompt content can be safely delimited. |
-| Validated locally | 212 tests pass offline. P7-2 validates CD-1013 detection and wrapping, no false positives across the other 12 demo tickets, auditable strong-signal classes, zero-width normalization, delimiter/source-attribute escaping, security-preamble constraints, and invalid source rejection. Ruff checks pass across backend, `integrations`, `agents`, `rag`, tests, and `main.py`. No LLM call, live external service, or cloud service was exercised. |
+| Repository contents | Phases 1 through 6 are present. Phase 7 now includes deterministic escalation/severity policy, injection containment, and customer-output validation. Specialist agents, secret scrubbing, the runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P6-4 plus P7-1 through P7-3. Policy routes without a model, severity only raises, untrusted prompts are contained, and unsafe customer-visible text receives a structured high-risk failure. |
+| Validated locally | 235 tests pass offline. P7-3 validates safe public replies, internal/local/private URL blocking, seven secret classes, cross-customer identifier blocking without value leakage, current-customer allowance, deduplicated multi-findings, empty-output rejection, and benign support text. Ruff checks pass across backend, `integrations`, `agents`, `rag`, tests, and `main.py`. No LLM call, live external service, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 6 are validated locally. Phase 7 is in progress with P7-1 and P7-2 completed; P7-3 and P7-4 remain pending. Later phases are not started. |
+| Phase plan | Phases 1 through 6 are validated locally. Phase 7 is in progress with P7-1 through P7-3 completed; P7-4 remains pending. Later phases are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
