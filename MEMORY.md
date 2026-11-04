@@ -62,6 +62,9 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   service status. Refund IDs are stable and idempotent, conflicting key reuse fails, and mock results
   explicitly state that no money or external account changed. The integration factory uses mocks only
   in demo mode and fails closed otherwise; `create_support_tool_registry` composes all nine tools.
+- P7-1 defines six ordered deterministic escalation rules for security incidents, data loss, account
+  deletion, payment disputes, legal requests, and enterprise outages. Each rule owns a named team and
+  minimum severity. Routing uses stable precedence, and `rule_severity` can only raise a model result.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -168,13 +171,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-11-04 |
 |---|---|
-| Repository contents | Phases 1 through 6 are present. Phase 6 includes the policy/registry boundary, nine support tools, and offline mock integrations. Agents, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P6-4. Read tools expose bounded context; controlled writes pass through approval policy; mock billing, workspace, and service-status providers compose through one support-tool registry. |
-| Validated locally | 183 tests pass offline. P6-4 validates provider protocols, checked-in service incidents, stable idempotent refund requests with no money movement, in-memory workspace changes, fail-closed non-demo selection, missing-data failure, all nine registrations, and zero provider calls before approval. Ruff checks pass across backend, `integrations`, `rag`, tests, and `main.py`. No live external service or cloud service was exercised. |
+| Repository contents | Phases 1 through 6 are present. Phase 7 now includes deterministic escalation and severity policy. Specialist agents, remaining guardrails, the runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P6-4 plus P7-1. Six policy cases route to named teams without a model, and severity rules only raise assessments. |
+| Validated locally | 198 tests pass offline. P7-1 validates all six policy cases, checked-in demo routing for CD-1001/CD-1005/CD-1006/CD-1009/CD-1011, non-dispute refund handling, enterprise-plan gating, stable multi-match precedence, raise-only severity, and CD-1010 remaining low. Ruff checks pass across backend, `integrations`, `agents`, `rag`, tests, and `main.py`. No model, live external service, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 6 are validated locally. Later phases are not started. |
+| Phase plan | Phases 1 through 6 are validated locally. Phase 7 is in progress with P7-1 completed; P7-2 through P7-4 remain pending. Later phases are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
