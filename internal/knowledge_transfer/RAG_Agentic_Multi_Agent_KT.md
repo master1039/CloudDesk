@@ -15,13 +15,13 @@ It explains:
 
 ## 2. Honest starting point
 
-As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, and P9-1 through P9-7 are implemented and validated locally. All six specialists now run offline: the escalation specialist guarantees that mandatory policy routes override model judgement and sends approved routing writes through the tool registry. Eval cases and graph integration remain future work.
+As of 5 November 2026, Phases 1–8, the pulled-forward memory track, and TASKS P9-1 through P9-8 are implemented and validated locally. All six specialists run offline, and sixteen evaluation cases now define expected classification, retrieval, grounding, and escalation outcomes. Metric calculation and graph integration remain future work.
 
 The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
-| Initial evaluation cases | Phase 9 (P9-8) | `datasets/eval_cases.json` |
+| Evaluation metric harness | Phase 13 | `tests/evaluation/` |
 | LangGraph workflow and tracing | Phase 10 | `agents/graph.py`, `agents/nodes/`, workflow services |
 | Human approval and escalation | Phase 11 | approval services, graph interrupts, action execution |
 
@@ -518,6 +518,19 @@ Assessment does not write anything, while execution cannot bypass the shared too
 mandatory Security Response route, see a vague low-risk escalation rejected, and verify the registry
 call used by the future graph node.
 
+### 9.8 The evaluation case dataset
+
+`datasets/eval_cases.json` is a small, versioned-by-Git benchmark rather than production customer
+data. Its sixteen fictional tickets cover every category, every knowledge article, and every mandatory
+escalation rule. Each row records the input ticket plus expected category, severity, relevant article,
+grounding phrases, and escalation destination.
+
+`tests/agents/test_eval_cases.py` protects the corpus itself. It catches duplicate case IDs, invalid
+enums, missing articles, grounding phrases that are not supported by those articles, incomplete
+category or knowledge coverage, and escalation expectations that differ from `policy_escalation`.
+This makes the later Phase 13 metrics reproducible without claiming those thresholds have already
+been measured.
+
 ## 10. Tools are capabilities, not ordinary helper functions
 
 P6-2 implements the first five read-only tools below, and P6-3 implements the four controlled write tools:
@@ -835,6 +848,9 @@ First run the P9-1 workflow-foundation tests and inspect the strict schemas plus
 the P9-2 supervisor, P9-3 customer agent, P9-4 knowledge agent, P9-5 troubleshooting agent, P9-6
 resolution agent, and P9-7 escalation agent. Run each with the fake provider. Read each specialist's output schema, rules,
 prompt, tools, and test before moving to the next specialist.
+
+Then inspect `datasets/eval_cases.json` beside `tests/agents/test_eval_cases.py`. Change one expected
+category or team temporarily and observe the contract test fail before reverting the experiment.
 
 Goal: understand each bounded responsibility without graph complexity.
 

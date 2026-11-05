@@ -144,8 +144,8 @@ Course documents 00–17 are not in this repo. This plan is the §19 phase plan 
 
 **Goal.** Six specialists each return their Pydantic model through `call_structured`, using the fake provider.
 
-**Status.** Structured workflow schemas, the offline fake LLM foundation, and all six specialists are
-validated locally; the initial eval cases remain pending.
+**Status.** Validated locally. Structured workflow schemas, the offline fake LLM foundation, all six
+specialists, and the initial evaluation cases are present and covered by offline tests.
 
 **Requirements.** F2, F3, F4, F5, F6, F7, F8, F10, F14.
 

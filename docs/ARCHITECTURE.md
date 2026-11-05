@@ -139,6 +139,17 @@ fixed threshold; model-invented policy identifiers are always removed. `escalate
 required decision with a named team and calls `create_escalation` through `ToolRegistry.execute`.
 This maps directly onto the future `risk_check` and `escalation` graph nodes without direct SQL.
 
+## Evaluation case contract
+
+P9-8 adds the initial offline corpus at `datasets/eval_cases.json`. Its sixteen fictional cases cover
+all ten ticket categories, all fifteen checked-in knowledge articles, and the six deterministic
+escalation rule classes. Every case carries ticket text, plan context, structured attributes, expected
+category and severity, expected retrieval articles, article-backed grounding phrases, and the expected
+escalation team and policy identifiers. Contract tests verify IDs and enums, full coverage, knowledge
+references, grounding support, and exact agreement with `policy_escalation`. The dataset supplies
+inputs and expected outcomes only; Phase 13 remains responsible for computing classification,
+retrieval, escalation, citation, and grounding metrics against the documented thresholds.
+
 ## Secret-scrubbing boundary
 
 `backend.app.core.guardrails.scrub` is the deterministic N7 boundary for text that may later enter
