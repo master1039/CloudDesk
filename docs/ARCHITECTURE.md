@@ -64,6 +64,15 @@ flowchart TD
 
 Forbidden dependencies include repositories calling LLMs, agents writing SQL, API handlers containing policy, tools bypassing the registry, RAG importing ticket code, integrations imported by core, and frontend code holding backend secrets.
 
+## Structured LLM boundary
+
+P9-1 defines strict workflow Pydantic models in `backend.app.schemas.workflow` and routes every future
+model call through `backend.app.core.llm.call_structured`. That boundary validates output, retries only
+bounded provider or validation failures, and returns token usage, duration, provider/model identity,
+attempt count, and estimated cost without exposing raw prompts. `FakeLLM` produces deterministic valid
+outputs offline, needs no API key, reports zero cost, and emits no planned actions because actions are
+owned by deterministic policy. Non-fake providers fail closed until an explicit adapter is added.
+
 ## Secret-scrubbing boundary
 
 `backend.app.core.guardrails.scrub` is the deterministic N7 boundary for text that may later enter
