@@ -123,6 +123,8 @@ async def test_get_customer_returns_bounded_context_without_internal_attributes(
     assert result.output["name"] == "Asha Rao"
     assert result.output["company"] == "Acme Analytics"
     assert result.output["workspace"]["slug"] == "acme-hq"
+    assert result.output["workspace"]["storage_used_bytes"] == 480_000_000_000
+    assert result.output["workspace"]["storage_limit_bytes"] == 1_000_000_000_000
     assert "attributes" not in result.output
     assert "phone" not in result.output
     assert "tickets" not in result.output

@@ -15,13 +15,13 @@ It explains:
 
 ## 2. Honest starting point
 
-As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, the P9-1 structured workflow/fake-LLM foundation, and the P9-2 support supervisor are implemented and validated locally. The supervisor classifies all demo tickets, contains prompt injection, applies deterministic category and severity policy, and creates structured run summaries without network access or an API key. The remaining specialists and graph integration remain future work.
+As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, the P9-1 structured workflow/fake-LLM foundation, the P9-2 support supervisor, and the P9-3 customer-context specialist are implemented and validated locally. The customer specialist uses policy-enforced reads and durable memory recall without calling an LLM. The remaining specialists and graph integration remain future work.
 
 The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
-| Remaining specialist agents | Phase 9 (P9-3 through P9-7) | `agents/specialists/` |
+| Remaining specialist agents | Phase 9 (P9-4 through P9-7) | `agents/specialists/` |
 | LangGraph workflow and tracing | Phase 10 | `agents/graph.py`, `agents/nodes/`, workflow services |
 | Human approval and escalation | Phase 11 | approval services, graph interrupts, action execution |
 
@@ -439,6 +439,20 @@ Run `uv run pytest tests/agents/test_supervisor.py -vv`. Compare CD-1010 with CD
 request remains low risk, while the malicious request stays data, is categorized as security, and
 retains auditable injection signals.
 
+### 9.3 The customer-context specialist
+
+`agents/specialists/customer.py` shows that an agent does not need an LLM. Its job is deterministic:
+
+1. call `get_customer`, `get_subscription`, and `get_ticket_history` through `ToolRegistry`;
+2. recall already-scrubbed durable notes through `MemoryService`;
+3. verify every result still belongs to the requested customer;
+4. project only approved fields into `CustomerContext`.
+
+The current ticket is excluded from history, and both previous tickets and memory notes are limited
+to ten. Extra tool fields such as billing amounts, timestamps, and internal record details do not
+enter workflow state. Run `uv run pytest tests/agents/test_customer.py -vv` and observe that token
+usage and model cost remain zero.
+
 ## 10. Tools are capabilities, not ordinary helper functions
 
 P6-2 implements the first five read-only tools below, and P6-3 implements the four controlled write tools:
@@ -753,7 +767,7 @@ Goal: distinguish reusable customer context from shared RAG knowledge.
 ### Phase 9 — learn each specialist separately
 
 First run the P9-1 workflow-foundation tests and inspect the strict schemas plus `FakeLLM`, then study
-the P9-2 supervisor. As P9-3 through P9-7 land, run one specialist at a time with the fake provider. Read its output schema, rules,
+the P9-2 supervisor and P9-3 customer agent. As P9-4 through P9-7 land, run one specialist at a time with the fake provider. Read its output schema, rules,
 prompt, tools, and test before moving to the next specialist.
 
 Goal: understand each bounded responsibility without graph complexity.

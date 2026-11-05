@@ -117,6 +117,8 @@ def create_read_tools(
                     "id": primary_workspace.id,
                     "name": primary_workspace.name,
                     "slug": primary_workspace.slug,
+                    "storage_used_bytes": primary_workspace.storage_used_bytes,
+                    "storage_limit_bytes": primary_workspace.storage_limit_bytes,
                 }
                 if primary_workspace
                 else None

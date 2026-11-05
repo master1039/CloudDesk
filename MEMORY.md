@@ -100,6 +100,11 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   `call_structured`. Narrow category rules override security incidents, prompt injection, payment
   disputes, and deletion requests. `rule_severity` may raise the model assessment but never lower it;
   the supervisor also emits a structured end-of-run summary without choosing tools or actions.
+- P9-3 implements the F4 customer specialist without an LLM. Customer identity, subscription,
+  workspace, and bounded ticket history are loaded only through `ToolRegistry.execute`; durable notes
+  come through the memory facade. Explicit projections remove extra tool fields, current tickets are
+  excluded, both history and memory are capped at 10, and every returned owner is checked against the
+  requested customer before a strict `CustomerContext` is created.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -206,13 +211,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-11-05 |
 |---|---|
-| Repository contents | Phases 1 through 7 and the pulled-forward memory track are present. Specialist work now includes the strict workflow/fake-LLM foundation and support supervisor; the other five specialists, graph integration, runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P9-2. The supervisor classifies tickets, applies deterministic category and raise-only severity policy, preserves injection findings, and creates structured run summaries through the shared offline-capable LLM boundary. |
-| Validated locally | 306 tests pass offline. P9-2 classifies all 13 demo tickets, contains and flags CD-1013, enforces deterministic category overrides, proves severity rules raise but never lower model output, and produces structured summaries with zero fake-provider cost. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No live LLM, external service, graph node, or cloud service was exercised. |
+| Repository contents | Phases 1 through 7 and the pulled-forward memory track are present. Specialist work now includes the strict workflow/fake-LLM foundation, support supervisor, and customer-context agent; the other four specialists, graph integration, runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P9-3. The customer agent assembles strict identity, subscription, workspace, previous-ticket, and safe-memory context through policy-enforced reads with no model call. |
+| Validated locally | 310 tests pass offline. P9-3 verifies complete customer context, workspace storage totals, current-ticket exclusion, bounded safe memory, registry-only tool calls, missing-customer handling, ownership isolation, zero token usage, and zero model cost. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No live LLM, external service, graph node, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 7 and P8-1 through P8-3 are validated locally. The specialist phase is in progress with P9-1 and P9-2 complete; P9-3 through P9-8 remain pending. Original Phase 11 memory still awaits graph-node wiring. |
+| Phase plan | Phases 1 through 7 and P8-1 through P8-3 are validated locally. The specialist phase is in progress with P9-1 through P9-3 complete; P9-4 through P9-8 remain pending. Original Phase 11 memory still awaits graph-node wiring. |
 
 ## Open questions from `CLAUDE.md` §20
 
