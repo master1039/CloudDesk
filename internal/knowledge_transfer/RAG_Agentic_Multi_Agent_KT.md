@@ -15,13 +15,13 @@ It explains:
 
 ## 2. Honest starting point
 
-As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, and the P9-1 structured workflow/fake-LLM foundation are implemented and validated locally. The fake provider supplies strict Pydantic outputs, retry metadata, token usage, and zero estimated cost without network access or an API key. Specialist and graph integration remain future work.
+As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, the P9-1 structured workflow/fake-LLM foundation, and the P9-2 support supervisor are implemented and validated locally. The supervisor classifies all demo tickets, contains prompt injection, applies deterministic category and severity policy, and creates structured run summaries without network access or an API key. The remaining specialists and graph integration remain future work.
 
 The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
-| Specialist agents | Phase 9 (P9-2 through P9-7) | `agents/specialists/` |
+| Remaining specialist agents | Phase 9 (P9-3 through P9-7) | `agents/specialists/` |
 | LangGraph workflow and tracing | Phase 10 | `agents/graph.py`, `agents/nodes/`, workflow services |
 | Human approval and escalation | Phase 11 | approval services, graph interrupts, action execution |
 
@@ -422,6 +422,23 @@ Run `uv run pytest tests/agents/test_workflow_foundation.py -vv` and inspect one
 `StructuredCallResult`. This shows the exact boundary future specialist agents will use before graph
 orchestration exists.
 
+### 9.2 The support supervisor
+
+`agents/specialists/supervisor.py` now implements the first bounded specialist. Its three jobs are:
+
+1. classify a ticket and produce a one-line summary;
+2. assess severity, then allow deterministic rules to raise—but never lower—the result;
+3. create a structured internal summary after a future workflow run completes.
+
+Ticket subjects and bodies are always passed through `wrap_untrusted`. The supervisor records safe
+injection signal names, and narrow deterministic category rules correct model output for security or
+prompt-injection cases, payment disputes, and deletion requests. It returns model-call metadata for
+future workflow tracing, but it does not call tools, write SQL, or decide workflow actions.
+
+Run `uv run pytest tests/agents/test_supervisor.py -vv`. Compare CD-1010 with CD-1013: the feature
+request remains low risk, while the malicious request stays data, is categorized as security, and
+retains auditable injection signals.
+
 ## 10. Tools are capabilities, not ordinary helper functions
 
 P6-2 implements the first five read-only tools below, and P6-3 implements the four controlled write tools:
@@ -735,8 +752,8 @@ Goal: distinguish reusable customer context from shared RAG knowledge.
 
 ### Phase 9 — learn each specialist separately
 
-First run the P9-1 workflow-foundation tests and inspect the strict schemas plus `FakeLLM`. As P9-2
-through P9-7 land, run one specialist at a time with the fake provider. Read its output schema, rules,
+First run the P9-1 workflow-foundation tests and inspect the strict schemas plus `FakeLLM`, then study
+the P9-2 supervisor. As P9-3 through P9-7 land, run one specialist at a time with the fake provider. Read its output schema, rules,
 prompt, tools, and test before moving to the next specialist.
 
 Goal: understand each bounded responsibility without graph complexity.
