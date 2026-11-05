@@ -83,6 +83,16 @@ judgement conflicts with policy. Severity is model-assisted but `rule_severity` 
 result. The specialist returns validated output plus token, duration, cost, provider, attempt,
 injection, and applied-policy metadata; it neither calls tools nor writes persistence directly.
 
+## Customer-context specialist boundary
+
+P9-3 implements `agents.specialists.CustomerAgent` as a deterministic F4 assembler with no LLM call.
+It obtains customer identity and workspace, subscription, and up to ten previous tickets only through
+`ToolRegistry.execute`, while up to ten scrubbed durable notes come through the memory facade. Tool
+payloads are explicitly projected into strict workflow schemas, the current ticket is excluded from
+history, and customer ownership is rechecked across subscription, history, and memory results before
+state is returned. The agent reports tool-call timing data with zero tokens and zero model cost; it
+does not import repositories or access SQL directly.
+
 ## Secret-scrubbing boundary
 
 `backend.app.core.guardrails.scrub` is the deterministic N7 boundary for text that may later enter
