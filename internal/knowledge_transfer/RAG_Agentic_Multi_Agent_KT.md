@@ -15,13 +15,13 @@ It explains:
 
 ## 2. Honest starting point
 
-As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, and P9-1 through P9-5 are implemented and validated locally. The troubleshooting specialist combines structured model diagnosis with registry-enforced service status and deterministic category playbooks. Resolution, escalation, and graph integration remain future work.
+As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, and P9-1 through P9-6 are implemented and validated locally. The resolution specialist grounds customer replies, replaces model-proposed actions with deterministic plans, and blocks unsafe output. Escalation and graph integration remain future work.
 
 The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
-| Remaining specialist agents | Phase 9 (P9-6 and P9-7) | `agents/specialists/` |
+| Remaining specialist agent | Phase 9 (P9-7) | `agents/specialists/` |
 | LangGraph workflow and tracing | Phase 10 | `agents/graph.py`, `agents/nodes/`, workflow services |
 | Human approval and escalation | Phase 11 | approval services, graph interrupts, action execution |
 
@@ -483,6 +483,24 @@ it cannot invoke refunds, resets, or any other remediation. Run
 `uv run pytest tests/agents/test_troubleshooting.py -vv` and compare SSO degradation, storage quota,
 and the injected tool-coercion case.
 
+### 9.6 The resolution specialist
+
+`agents/specialists/resolution.py` separates writing from authority:
+
+1. ticket facts, diagnosis, evidence, and customer context are wrapped as untrusted data;
+2. `call_structured` drafts only the resolution summary, customer reply, and internal notes;
+3. `_ground_response` appends a safe knowledge link for each cited article;
+4. any actions suggested by the model are discarded;
+5. `plan_actions` builds only known actions from explicit structured fields;
+6. `ToolPolicy` marks refunds and setting resets as requiring human approval;
+7. `validate_customer_output` checks the final reply before it can reach a customer.
+
+If validation finds a secret, internal URL, empty response, or another customer's identifier, the
+specialist returns high-risk validation metadata and substitutes a generic message requiring agent
+review. It does not execute any planned action; later workflow nodes own approval and execution. Run
+`uv run pytest tests/agents/test_resolution.py -vv` to see model-invented actions removed, citations
+added, approval flags applied, and unsafe replies blocked.
+
 ## 10. Tools are capabilities, not ordinary helper functions
 
 P6-2 implements the first five read-only tools below, and P6-3 implements the four controlled write tools:
@@ -797,7 +815,8 @@ Goal: distinguish reusable customer context from shared RAG knowledge.
 ### Phase 9 — learn each specialist separately
 
 First run the P9-1 workflow-foundation tests and inspect the strict schemas plus `FakeLLM`, then study
-the P9-2 supervisor, P9-3 customer agent, P9-4 knowledge agent, and P9-5 troubleshooting agent. As P9-6 and P9-7 land, run one specialist at a time with the fake provider. Read its output schema, rules,
+the P9-2 supervisor, P9-3 customer agent, P9-4 knowledge agent, P9-5 troubleshooting agent, and P9-6
+resolution agent. As P9-7 lands, run it with the fake provider. Read each specialist's output schema, rules,
 prompt, tools, and test before moving to the next specialist.
 
 Goal: understand each bounded responsibility without graph complexity.

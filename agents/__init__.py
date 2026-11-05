@@ -1,6 +1,7 @@
 """Deterministic policy and agent orchestration for CloudDesk."""
 
 from .prompts import (
+    RESOLUTION_PROMPT,
     SECURITY_PREAMBLE,
     SUPERVISOR_CLASSIFICATION_PROMPT,
     SUPERVISOR_SEVERITY_PROMPT,
@@ -22,6 +23,7 @@ from .rules import (
 
 __all__ = [
     "ESCALATION_RULES",
+    "RESOLUTION_PROMPT",
     "SECURITY_PREAMBLE",
     "SUPERVISOR_CLASSIFICATION_PROMPT",
     "SUPERVISOR_SEVERITY_PROMPT",

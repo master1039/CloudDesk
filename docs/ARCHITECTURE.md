@@ -114,6 +114,19 @@ renumbered, and status-tool failure becomes an explicit `unavailable` status rat
 diagnosis. The specialist exposes model/tool telemetry but never executes remediation or chooses
 workflow actions.
 
+## Resolution specialist boundary
+
+P9-6 implements `agents.specialists.ResolutionAgent` for F8, F9, and N5. Ticket facts, diagnosis,
+customer context, and cited evidence are delimited as untrusted data before the single
+`call_structured(ResolutionPlan, ...)` call. The model may draft explanatory text but cannot control
+side effects: every returned action is discarded and `plan_actions` reconstructs a bounded action
+list from explicit structured inputs. `ToolPolicy` supplies each action's approval flag, so routine
+ticket updates remain non-gated while refund requests and demo-setting resets are always gated.
+Knowledge references are appended as safe `/knowledge/` citations, then the complete customer reply
+passes through `validate_customer_output`. A failed gate is retained as safe risk metadata while the
+reply is replaced by a generic agent-review message. The specialist plans only; it neither executes
+tools nor writes SQL.
+
 ## Secret-scrubbing boundary
 
 `backend.app.core.guardrails.scrub` is the deterministic N7 boundary for text that may later enter

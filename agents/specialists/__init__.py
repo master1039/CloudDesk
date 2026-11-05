@@ -8,6 +8,7 @@ from .customer import (
     CustomerNotFoundError,
 )
 from .knowledge import KnowledgeAgent, KnowledgeAgentError, KnowledgeAgentResult, jaccard_similarity
+from .resolution import ResolutionAgent, ResolutionAgentResult
 from .supervisor import SupervisorAgent, SupervisorResult
 from .troubleshooting import (
     CATEGORY_PLAYBOOKS,
@@ -26,6 +27,8 @@ __all__ = [
     "KnowledgeAgent",
     "KnowledgeAgentError",
     "KnowledgeAgentResult",
+    "ResolutionAgent",
+    "ResolutionAgentResult",
     "SupervisorAgent",
     "SupervisorResult",
     "TroubleshootingAgent",
