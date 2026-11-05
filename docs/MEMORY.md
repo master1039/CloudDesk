@@ -125,21 +125,21 @@ Cases live in `datasets/eval_cases.json` and each case needs a valid `expected_c
 
 Update each row in place. Do not mark a row done from intention.
 
-| Surface | State on 2026-10-25 |
+| Surface | State on 2026-10-28 |
 |---|---|
-| Repository contents | Project guidance is in place. P1-1 adds the backend package skeleton, environment-backed settings, JSON logging, and focused unit tests. Health routes, middleware, the full test harness, sample data, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 settings and JSON logging: cached immutable settings cover every variable in `CLAUDE.md` §10.1, secrets use `SecretStr`, and JSON logs always include `request_id` and `workflow_id`. |
-| Validated locally | P1-1: 5 focused unit tests pass; backend/tests compile; the JSON logging smoke check passes. `make test` and `make demo` do not exist yet. |
+| Repository contents | Phases 1 through 3 are present: runtime and demo persistence, JWT/RBAC and demo authentication, Redis fixed-window rate limiting, and durable audit middleware. Domain APIs, agents, frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P3-4. Every non-GET request, including rejected requests, writes scrubbed request metadata to `audit_logs` without storing bodies, query values, authorization headers, or tokens. Audit failure cannot replace the caller response. Middleware registration is locked as CORS → RequestId → RateLimit → Audit, with the last registered layer outermost. |
+| Validated locally | 67 tests pass offline. Audit tests cover authenticated success, viewer-denied mutation, GET exclusion, request correlation, secret/query omission, persistence failure isolation, and exact middleware registration order. Phase 3 also proves invalid-token rejection, viewer 403 behavior, agent acceptance, eight-hour demo login, and fakeredis rate limiting. Ruff, dependency, lock, persistence, seed, and schema checks pass. No live Redis, Supabase, or cloud service was used. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phase 1 is in progress (P1-1 complete; P1-2 through P1-4 pending). Phases 2–13 are not started. |
+| Phase plan | Phases 1 through 3 are validated locally. Phases 4–13 are not started. |
 
 ## Open questions from `CLAUDE.md` §20
 
 - The course's original Project 1 `README.md` was not supplied. A repository README was created from `CLAUDE.md`; its planned commands still need validation as their phases are implemented.
 - Course paths `../docs/`, `../deployment-agent/`, and `../shared-infrastructure/` sit outside this repo. They are not copied in yet.
-- Table counts disagree across the course notes (16 in the database doc, 15 data tables in the RLS note). `database/schema.sql` becomes the authority once it is written.
+- Resolved 2026-10-27: `database/schema.sql` defines 16 tables and is authoritative; RLS covers the same 16 tables.
 - Stage documents 00–17 are not in this repo. `PLAN_PHASE.md` is derived from `CLAUDE.md`, not from those missing files.
 
 ## Update protocol

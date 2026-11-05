@@ -13,6 +13,10 @@ Target HTTP contract for the v1 agent console. This document is authoritative fo
 - Errors use `{ "detail": string }`.
 - List responses use `{ "items": T[], "total": integer, "limit": integer, "offset": integer }`.
 - Unknown resources return 404; invalid input returns 422; insufficient role returns 403.
+- Non-health HTTP requests use a per-client, 60-second Redis fixed window. Responses include
+  `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and the Unix timestamp `X-RateLimit-Reset`. A blocked
+  request returns `429 { "detail": "Rate limit exceeded" }` plus `Retry-After`. Health routes and CORS
+  preflight requests are exempt; unavailable Redis returns 503 rather than silently disabling limits.
 - A second run while a ticket waits for approval returns 409. Resuming a non-paused run returns 409.
 
 Roles: `viewer` can read; `agent` can run workflows and act on tickets/approvals; `admin` additionally manages knowledge indexing and settings.
@@ -39,9 +43,22 @@ ApprovalStatus = pending | approved | rejected
 | GET | `/health/live` | public | `200 {"status":"ok"}` with no dependency I/O |
 | GET | `/health/ready` | public | `200` when dependencies are ready; `503` otherwise |
 
-`HealthResponse`: `status`, `version`, and optional dependency status map.
+`GET /health` returns `HealthResponse`: `status: "ok"` and `version`.
+
+`GET /health/live` returns only `{ "status": "ok" }` and performs no dependency I/O.
+
+`GET /health/ready` returns `status`, `version`, and `dependencies`, a string map populated as
+database, Redis, vector-store, and LLM readiness checks are introduced. It is empty during the
+runtime-skeleton phase.
 
 ## Authentication
+
+Bearer tokens use HS256, require `sub` and `exp`, and are verified with
+`SUPABASE_JWT_SECRET` when configured or `JWT_SECRET` otherwise. CloudDesk roles may be carried in
+`app_role`, `app_metadata.role`, `user_metadata.role`, or a top-level `role`; only `viewer`, `agent`,
+and `admin` are accepted as application roles. A Supabase `aud: authenticated` claim is supported.
+Missing or invalid credentials return 401, while an authenticated user below the route's minimum
+role receives 403.
 
 | Method | Path | Role | Request | Response |
 |---|---|---|---|---|
@@ -49,8 +66,11 @@ ApprovalStatus = pending | approved | rejected
 | GET | `/api/v1/auth/me` | viewer | — | `200 Profile` |
 
 `LoginRequest`: `email`, `password`. In demo mode this authenticates only configured demo users.
+All three checked-in demo profiles use the intentionally public password `clouddesk-demo`; local login
+returns 403 when `DEMO_MODE=false`. Invalid email and password attempts share the same 401 response.
 
-`AuthResponse`: `access_token`, `token_type: "bearer"`, `expires_in`, `user: Profile`.
+`AuthResponse`: `access_token`, `token_type: "bearer"`, `expires_in`, `user: Profile`. Demo tokens
+expire after 8 hours (`expires_in: 28800`).
 
 `Profile`: `id`, `email`, `display_name`, `role`.
 
@@ -76,7 +96,15 @@ ApprovalStatus = pending | approved | rejected
 | POST | `/api/v1/tickets/{ticket_id}/request-info` | agent | `200 TicketMessage` |
 | POST | `/api/v1/tickets/{ticket_id}/escalate` | agent | `201 Escalation` |
 
-List filters: `status`, `severity`, `category`, `channel`, `customer_id`, `search`, `limit`, `offset`.
+P4 implements the first three routes in this table. The workflow and action routes remain the
+forward contract for their later phases. `{ticket_id}` is the internal UUID; `display_id` is returned
+for human-facing values such as `CD-1002`.
+
+`TicketListParams` defines optional filters `status`, `severity`, `category`, `channel`, `customer_id`,
+and `search`. Pagination uses
+`limit` (default 50, minimum 1, maximum 100) and `offset` (default 0, minimum 0). `search` matches the
+display ID, subject, or customer name. Results are ordered by newest creation time, then ID. Invalid
+enum filters return 422.
 
 `CreateTicketRequest`:
 
@@ -89,9 +117,30 @@ List filters: `status`, `severity`, `category`, `channel`, `customer_id`, `searc
 }
 ```
 
-`TicketSummary`: `id`, `display_id`, `subject`, `customer_id`, `customer_name`, `channel`, `status`, nullable `category`, nullable `severity`, nullable `summary`, `created_at`, `updated_at`.
+`CreateTicketRequest` trims all text fields. `customer_id`, `subject`, and `body` cannot be blank;
+`subject` is limited to 500 characters and `body` to 50,000. `channel` accepts exactly `email`,
+`chat`, `web`, or `api` (F1). An unknown customer returns 404. Creation returns a new ticket with
+status `new`; category, severity, and summary are null until classification.
 
-`TicketDetail` extends `TicketSummary` with `body`, `messages`, nullable `workflow`, nullable `approval`, nullable `escalation`, and customer context links. Ticket text is untrusted data.
+`TicketSummary`: `id`, `display_id`, `subject`, `customer_id`, `customer_name`, `channel`, `status`,
+nullable `category`, nullable `severity`, nullable `summary`, `created_at`, `updated_at`.
+
+`TicketDetail` extends `TicketSummary` with:
+
+- `body` and `messages: TicketMessage[]`;
+- nullable `workflow: WorkflowReference`, `approval: ApprovalReference`, and
+  `escalation: EscalationReference`;
+- `customer_context_links: CustomerContextLinks`.
+
+`WorkflowReference`: `id`, `status`, `url`.
+
+`ApprovalReference`: `id`, `status`, `url`.
+
+`EscalationReference`: `id`, `status`, `team`, `url`.
+
+`CustomerContextLinks`: `customer`, nullable `subscription`, nullable `workspace`, and
+`previous_tickets`. Each value is an API-relative URL. Links avoid copying the full customer account
+graph into every ticket response. Ticket subject and body are always untrusted data.
 
 `TicketMessage`: `id`, `ticket_id`, `direction` (`inbound|outbound|internal`), `author`, `body`, `created_at`.
 
@@ -139,24 +188,51 @@ List filters: `status`, `severity`, `category`, `channel`, `customer_id`, `searc
 | GET | `/api/v1/customers` | viewer | Paginated `CustomerSummary` list |
 | GET | `/api/v1/customers/{customer_id}` | viewer | `200 CustomerDetail` |
 
-`CustomerSummary`: `id`, `name`, `email`, `plan`, `workspace_id`, `created_at`.
+`CustomerListParams` defines optional `search` and `plan`, plus the shared `limit` and `offset` rules. `search`
+matches customer name, email, or company. Results are ordered by customer name, then ID.
 
-`CustomerDetail` extends it with subscription, workspace, previous tickets, and up to 10 scrubbed memory notes.
+`CustomerSummary`: `id`, `name`, `email`, nullable `company`, nullable `plan`, nullable
+`workspace_id`, `created_at`.
+
+`CustomerDetail` extends `CustomerSummary` with nullable `subscription: Subscription`, nullable
+`workspace: Workspace`, `previous_tickets: TicketSummary[]`, and
+`memory_notes: CustomerMemoryNote[]`. Previous tickets are newest first and limited to 10. Memory
+notes are scrubbed, newest first, and limited to 10 (F4).
+
+`Subscription`: `id`, `plan`, `status`, `seats`, `amount` (decimal string), `currency`,
+`billing_interval`, nullable `current_period_end`.
+
+`Workspace`: `id`, `name`, `slug`, `storage_used_bytes`, `storage_limit_bytes`.
+
+`CustomerMemoryNote`: `id`, `memory_type`, `content`, nullable `source_ticket_id`, `created_at`.
+The response never includes memory fingerprints, internal attributes, or raw ticket bodies.
 
 ## Knowledge
 
 | Method | Path | Role | Request/Query | Result |
 |---|---|---|---|---|
-| GET | `/api/v1/knowledge` | viewer | pagination/category/search | Article summaries |
+| GET | `/api/v1/knowledge` | viewer | `KnowledgeListParams` | Paginated `KnowledgeArticleSummary` |
 | GET | `/api/v1/knowledge/{article_id}` | viewer | — | `200 KnowledgeArticle` |
 | POST | `/api/v1/knowledge/search` | viewer | `KnowledgeSearchRequest` | `200 {"items": Evidence[]}` |
-| POST | `/api/v1/knowledge/reindex` | admin | optional provider/model override | `202 ReindexJob` |
+| POST | `/api/v1/knowledge/reindex` | admin | optional `ReindexRequest` | `202 ReindexJob` |
 
-`KnowledgeSearchRequest`: `query`, optional `category`, `mode` (`hybrid|semantic|keyword`, default `hybrid`), and `top_k`.
+`KnowledgeListParams` defines optional `category` and `search`, plus `limit` (default 50, range
+1–100) and `offset` (default 0). Search matches title, summary, or body. Published results are ordered
+by title, then ID.
+
+`KnowledgeSearchRequest`: trimmed `query` (1–2,000 characters), optional category reranking signal,
+`mode` (`hybrid|semantic|keyword`, default `hybrid`), and `top_k` (default 5, range 1–20).
+
+`KnowledgeArticleSummary`: `id`, `slug`, `title`, `category`, `tags`, `summary`, `updated_at`.
 
 `KnowledgeArticle`: `id`, `slug`, `title`, `category`, `tags`, `summary`, `body`, `updated_at`.
 
-`ReindexJob`: `id`, `status`, `collection`, `created_at`. Reindex recreates the selected collection.
+`ReindexRequest`: optional `embedding_provider` and `embedding_model`. Unsupported providers return
+422. The body may be omitted to use configured values.
+
+`ReindexJob`: `id`, `status: "completed"`, `collection`, `article_count`, `chunk_count`,
+`indexed_count`, `created_at`. Reindex recreates and repopulates the selected collection before the
+response is returned. Viewer and agent roles receive 403.
 
 ## Escalations
 
@@ -184,6 +260,11 @@ List filters: `status`, `severity`, `category`, `channel`, `customer_id`, `searc
 Filters: `actor_id`, `method`, `path`, `request_id`, `from`, `to`, `limit`, `offset`.
 
 `AuditEntry`: `id`, `actor_id`, `actor_role`, `method`, `path`, `status_code`, `request_id`, scrubbed `change_summary`, `created_at`.
+
+Every non-GET request is audited, including rejected requests. Audit middleware never stores request
+bodies, authorization headers, query values, passwords, or tokens. `change_summary` contains only the
+outcome class and whether a valid bearer identity was present. Audit persistence failures are logged
+without replacing the HTTP response already produced for the caller.
 
 ## Settings
 

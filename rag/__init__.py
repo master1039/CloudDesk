@@ -1,0 +1,88 @@
+"""Knowledge loading and retrieval components for CloudDesk RAG."""
+
+from .chunking import (
+    CHUNK_OVERLAP_CHARS,
+    MAX_CHUNK_CHARS,
+    KnowledgeArticle,
+    KnowledgeArticleError,
+    KnowledgeChunk,
+    chunk_article,
+    chunk_articles,
+    load_article_file,
+    load_article_files,
+)
+from .embeddings import (
+    EmbeddingConfigurationError,
+    EmbeddingService,
+    FakeEmbeddings,
+    get_embedding_service,
+)
+from .ingest import (
+    IngestReport,
+    KnowledgeIndex,
+    build_knowledge_index,
+    ingest_from_settings,
+)
+from .retriever import (
+    DEFAULT_CANDIDATE_LIMIT,
+    RETRIEVAL_CACHE_TTL_SECONDS,
+    RRF_K,
+    Evidence,
+    EvidenceReranker,
+    HybridRetriever,
+    RetrievalCache,
+    RetrievalMode,
+    heuristic_rerank,
+    reciprocal_rank_fusion,
+    retrieval_cache_key,
+)
+from .vector_store import (
+    InMemoryVectorStore,
+    QdrantVectorStore,
+    VectorDocument,
+    VectorSearchResult,
+    VectorStoreConfigurationError,
+    VectorStoreService,
+    get_vector_store,
+    vector_documents_from_chunks,
+)
+
+__all__ = [
+    "CHUNK_OVERLAP_CHARS",
+    "DEFAULT_CANDIDATE_LIMIT",
+    "MAX_CHUNK_CHARS",
+    "RETRIEVAL_CACHE_TTL_SECONDS",
+    "RRF_K",
+    "EmbeddingConfigurationError",
+    "EmbeddingService",
+    "Evidence",
+    "EvidenceReranker",
+    "FakeEmbeddings",
+    "HybridRetriever",
+    "InMemoryVectorStore",
+    "IngestReport",
+    "KnowledgeArticle",
+    "KnowledgeArticleError",
+    "KnowledgeChunk",
+    "KnowledgeIndex",
+    "QdrantVectorStore",
+    "RetrievalCache",
+    "RetrievalMode",
+    "VectorDocument",
+    "VectorSearchResult",
+    "VectorStoreConfigurationError",
+    "VectorStoreService",
+    "build_knowledge_index",
+    "chunk_article",
+    "chunk_articles",
+    "get_embedding_service",
+    "get_vector_store",
+    "heuristic_rerank",
+    "ingest_from_settings",
+    "load_article_file",
+    "load_article_files",
+    "reciprocal_rank_fusion",
+    "retrieval_cache_key",
+    "vector_documents_from_chunks",
+]
+

@@ -1,0 +1,6 @@
+[
+  {"customer_ref": "cust-acme", "memory_type": "past_issue", "fingerprint": "acme-sso-clock-skew", "content": "A prior SSO failure was caused by identity-provider clock skew.", "resolution": "Corrected the IdP clock and refreshed SAML metadata."},
+  {"customer_ref": "cust-northstar", "memory_type": "troubleshooting", "fingerprint": "northstar-api-backoff", "content": "Nightly API jobs should use exponential backoff and honor Retry-After.", "resolution": "Added capped exponential backoff and reduced concurrency."},
+  {"customer_ref": "cust-orbit", "memory_type": "past_issue", "fingerprint": "orbit-storage-trash", "content": "Deleted files continued to count toward quota until trash was emptied.", "resolution": "Emptied workspace trash and verified quota recalculation."},
+  {"customer_ref": "cust-cascade", "memory_type": "troubleshooting", "fingerprint": "cascade-mfa-recovery", "content": "The account has previously used administrator-assisted MFA recovery.", "resolution": "Verified identity, reset MFA, and enrolled a new authenticator."}
+]

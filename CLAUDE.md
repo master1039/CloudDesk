@@ -543,17 +543,17 @@ this file. Stage 17 is optional and is not a core exit criterion.
 
 | Phase | Name | Status |
 |---|---|---|
-| 1 | Runtime skeleton | in progress |
-| 2 | Persistence and demo data | not started |
-| 3 | Identity and request guards | not started |
-| 4 | Support API | not started |
-| 5 | Knowledge pipeline | not started |
-| 6 | Tools and policy | not started |
-| 7 | Rules and guardrails | not started |
-| 8 | Specialist agents | not started |
+| 1 | Runtime skeleton | validated locally |
+| 2 | Persistence and demo data | validated locally |
+| 3 | Identity and request guards | validated locally |
+| 4 | Support API | validated locally |
+| 5 | Knowledge pipeline | validated locally |
+| 6 | Tools and policy | validated locally |
+| 7 | Rules and guardrails | validated locally |
+| 8 | Specialist agents | in progress |
 | 9 | Workflow graph and trace | not started |
 | 10 | Approval and escalation | not started |
-| 11 | Memory | not started |
+| 11 | Memory | in progress |
 | 12 | Agent console | not started |
 | 13 | Evaluation and delivery | not started |
 
@@ -565,6 +565,6 @@ this file. Stage 17 is optional and is not a core exit criterion.
   this specification; section 14 commands must be validated as their implementation phases land.
 - The course documents reference `../docs/…`, `../deployment-agent/…` and `../shared-infrastructure/…`
   that sit outside Project 1. Decide whether they are copied in or referenced.
-- Document counts differ slightly between files (for example tables: 16 in the database doc, 15 data
-  tables in RLS). Treat `database/schema.sql` as the authority once written.
+- Resolved on 2026-10-27: `database/schema.sql` defines all 16 data tables and is the authority for
+  table count; `database/rls_policies.sql` covers the same set.
 - Stage 17 (Agentic DevOps) depends on Stages 13–16; treat it as optional for the core Project 1 completion.

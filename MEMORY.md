@@ -21,6 +21,107 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
 - The backend uses the service-role key on the server. The browser receives only the anon key.
 - JWT is HS256. Demo tokens expire in 8 hours.
 - Background workflows run in-process for v1.
+- P4 transport shapes are synchronized across `docs/API_CONTRACT.md`, backend Pydantic schemas, and
+  `frontend/lib/types.ts`. Ticket creation accepts exactly email, chat, web, and API channels; customer
+  detail responses cap previous tickets and scrubbed memory notes at 10 each.
+- P4-2 exposes authenticated ticket list/detail reads to viewers and ticket creation to agents. The
+  service owns commit/rollback, repository filters cover the written contract, and SQLite-naive
+  timestamps are normalized to UTC at the transport boundary.
+- P4-3 exposes viewer-protected customer list/detail reads. Customer detail returns the subscription,
+  deterministic primary workspace, up to 10 ticket summaries without bodies, and up to 10 memory
+  notes without fingerprints or internal attributes.
+- P5-1 validates the 15 Markdown knowledge articles and chunks them by Markdown heading. Final
+  indexable content, including the `"{title} - {heading}"` prefix, is capped at 900 characters with
+  150 characters of section-text overlap and deterministic chunk IDs/citation sources.
+- P5-2 uses deterministic, normalized 384-dimensional feature hashing in fake mode. Retrieval code
+  depends on one asynchronous vector-store protocol, while settings select either the concurrency-safe
+  in-memory cosine store or the Qdrant adapter. Qdrant point IDs are stable UUIDs, and the original
+  chunk ID plus citation metadata remain in the payload.
+- P5-3 implements semantic, BM25 keyword, and hybrid retrieval behind `HybridRetriever`. Hybrid mode
+  uses reciprocal-rank fusion with `k=60`, category/title heuristic boosts, an optional reranker that
+  can only reorder known evidence, and one result per article. Explicit metadata filters are hard
+  restrictions; ticket category is a soft ranking signal. Cacheable queries use the documented key
+  shape and a 300-second TTL.
+- P5-4 completes the knowledge pipeline. `rag.ingest` reports article/chunk/vector counts and the
+  knowledge runtime lazily builds the configured index. SQL-backed viewer routes list and read
+  published articles, viewer search returns cited evidence, and admin-only reindex recreates the
+  vector collection, clears retrieval-cache entries, and atomically swaps the active index.
+- P6-1 establishes `ToolPolicy` as the deterministic F9 approval matrix and `ToolRegistry.execute`
+  as the only execution boundary. Async `@tool` registration is required; unknown or unclassified
+  capabilities default to approval-required, unregistered names never execute, timeouts use
+  `TOOL_TIMEOUT_SECONDS`, and exceptions become scrubbed `ToolResult` failures.
+- P6-2 adds the five bounded read-only capabilities through `create_read_tool_registry`: safe customer
+  and subscription projections, body-free ticket history with current-ticket exclusion, cited RAG
+  search, and service-status checks. Status access is dependency-injected so provider implementations
+  can change without changing agents or registry execution.
+- P6-3 adds four controlled writes through `create_write_tool_registry`. Routine ticket updates are
+  field-limited, escalation creation is transactional and idempotent for an identical open escalation,
+  and refund/workspace actions cannot reach injected providers until the registry receives explicit
+  approval. Refund amounts use `Decimal` and require an idempotency key.
+- P6-4 implements dependency-injected, in-memory mocks for billing, workspace administration, and
+  service status. Refund IDs are stable and idempotent, conflicting key reuse fails, and mock results
+  explicitly state that no money or external account changed. The integration factory uses mocks only
+  in demo mode and fails closed otherwise; `create_support_tool_registry` composes all nine tools.
+- P7-1 defines six ordered deterministic escalation rules for security incidents, data loss, account
+  deletion, payment disputes, legal requests, and enterprise outages. Each rule owns a named team and
+  minimum severity. Routing uses stable precedence, and `rule_severity` can only raise a model result.
+- P7-2 adds N4 injection containment. `scan_for_injection` normalizes Unicode/zero-width obfuscation
+  and reports stable strong-signal names; `wrap_untrusted` escapes content and source attributes so
+  customer text cannot close its delimiter. `SECURITY_PREAMBLE` forbids embedded instructions from
+  revealing prompts, invoking tools, changing actions, or altering workflow routing.
+- P7-3 adds the N5 customer-output gate. Empty output, internal/private URLs, secret-like material,
+  and context-supplied identifiers belonging to other customers produce generic violation codes and
+  `high` risk without echoing matched values. Public documentation URLs and the current customer's
+  identifiers remain allowed. Secret classes are centralized for reuse by P7-4 scrubbing.
+- P7-4 adds the N7 `scrub` boundary for future durable memory. It reuses centralized secret patterns,
+  validates payment-card candidates with Luhn, removes complete private-key blocks and credential URLs,
+  merges overlapping spans, and emits only the generic `[REDACTED]` marker. Scrubbing is deterministic
+  and idempotent, and benign support text is preserved.
+- P8-1 adds the short-term Redis/fakeredis facade for F4/F11. Conversations use ticket-scoped Redis
+  lists for ordered atomic appends, workflow state uses JSON strings, and every write applies or
+  refreshes a 24-hour TTL. Ticket identifiers are constrained before key construction, dependencies
+  are injected for offline tests, and one-ticket cleanup cannot remove another ticket's state.
+- P8-2 adds the durable F4/F11/N7 customer-memory write boundary. It scrubs content before computing a
+  SHA-256 fingerprint, relies on the existing customer/type/fingerprint uniqueness constraint, and
+  returns the existing note for exact duplicates. Recall is newest-first and capped at 10. Safe note
+  projections omit fingerprints and attributes; source ticket/workflow ownership is verified, and raw
+  source-ticket bodies are rejected before persistence.
+- P8-3 adds the workflow-facing F4/F11 memory service. `recall_customer` returns at most 10 safe notes;
+  `record_resolution` atomically writes one past-issue note, one numbered troubleshooting note capped
+  at the first three non-blank steps, and one resolution note. Replays reuse the same rows through the
+  long-term fingerprint boundary, and invalid input rolls the complete service write back.
+- P9-1 establishes the F14 structured LLM boundary. Every model-generated value is a strict Pydantic
+  workflow schema, and `call_structured` owns validation, bounded retry, token usage, duration, and
+  estimated cost. `FakeLLM` returns deterministic schema-specific data without network access or an
+  API key, costs `0.0`, and leaves resolution actions empty for deterministic planning. Non-fake
+  providers fail closed until their adapters are implemented.
+- P9-2 implements the F2/F3/F11 supervisor specialist. Ticket content is always delimited with
+  `wrap_untrusted`, injection signals are retained as safe metadata, and every model call uses
+  `call_structured`. Narrow category rules override security incidents, prompt injection, payment
+  disputes, and deletion requests. `rule_severity` may raise the model assessment but never lower it;
+  the supervisor also emits a structured end-of-run summary without choosing tools or actions.
+- P9-3 implements the F4 customer specialist without an LLM. Customer identity, subscription,
+  workspace, and bounded ticket history are loaded only through `ToolRegistry.execute`; durable notes
+  come through the memory facade. Explicit projections remove extra tool fields, current tickets are
+  excluded, both history and memory are capped at 10, and every returned owner is checked against the
+  requested customer before a strict `CustomerContext` is created.
+- P9-4 implements the F5/F6 knowledge specialist without an LLM. Cited hybrid retrieval runs only
+  through `ToolRegistry.execute("search_docs", ...)`; returned evidence is strictly projected,
+  deduplicated by article, and bounded to 10. Caller-supplied resolved cases are ranked with
+  deterministic token-set Jaccard overlap and stable tie-breaking. Retrieval and case ranking report
+  zero tokens and zero model cost.
+- P9-5 implements the F7 troubleshooting specialist. Ticket text, cited evidence, and service status
+  are wrapped as untrusted before the `call_structured(Diagnosis, ...)` boundary. Service health is
+  checked only through `ToolRegistry`; failure degrades to an explicit unavailable status instead of
+  blocking diagnosis. Ten deterministic category playbooks enrich probable causes and safe steps,
+  active incidents are surfaced first, and final steps are deduplicated and numbered without allowing
+  the model to execute tools or actions.
+- P9-6 implements the F8/F9/N5 resolution specialist. It uses `call_structured(ResolutionPlan, ...)`
+  only for the summary, customer reply, and internal notes; model-proposed actions are always
+  discarded. `plan_actions` creates only known write-tool actions from explicit structured inputs and
+  derives approval requirements from `ToolPolicy`. Knowledge citations are appended to the reply,
+  and `validate_customer_output` replaces unsafe replies with a generic review message while retaining
+  safe violation metadata for later risk routing. Planning performs no SQL or tool execution.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -125,21 +226,21 @@ Cases live in `datasets/eval_cases.json` and each case needs a valid `expected_c
 
 Update each row in place. Do not mark a row done from intention.
 
-| Surface | State on 2026-10-25 |
+| Surface | State on 2026-11-05 |
 |---|---|
-| Repository contents | Project guidance is in place. P1-1 adds the backend package skeleton, environment-backed settings, JSON logging, and focused unit tests. Health routes, middleware, the full test harness, sample data, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 settings and JSON logging: cached immutable settings cover every variable in `CLAUDE.md` §10.1, secrets use `SecretStr`, and JSON logs always include `request_id` and `workflow_id`. |
-| Validated locally | P1-1: 5 focused unit tests pass; backend/tests compile; the JSON logging smoke check passes. `make test` and `make demo` do not exist yet. |
+| Repository contents | Phases 1 through 7 and the pulled-forward memory track are present. Specialist work now includes the strict workflow/fake-LLM foundation, support supervisor, customer-context, knowledge, troubleshooting, and resolution agents; the escalation specialist, graph integration, runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P9-6. The resolution agent drafts grounded content, replaces model actions with deterministic approval-aware plans, and blocks unsafe customer output without executing remediation. |
+| Validated locally | 325 tests pass offline. P9-6 verifies evidence grounding, deterministic action replacement, approval classification for refund and setting-reset plans, customer-output blocking, safe validation metadata, token telemetry, and zero fake-provider cost. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No live LLM, external service, graph node, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phase 1 is in progress (P1-1 complete; P1-2 through P1-4 pending). Phases 2–13 are not started. |
+| Phase plan | Phases 1 through 7 and P8-1 through P8-3 are validated locally. The specialist phase is in progress with P9-1 through P9-6 complete; P9-7 and P9-8 remain pending. Original Phase 11 memory still awaits graph-node wiring. |
 
 ## Open questions from `CLAUDE.md` §20
 
 - The course's original Project 1 `README.md` was not supplied. A repository README was created from `CLAUDE.md`; its planned commands still need validation as their phases are implemented.
 - Course paths `../docs/`, `../deployment-agent/`, and `../shared-infrastructure/` sit outside this repo. They are not copied in yet.
-- Table counts disagree across the course notes (16 in the database doc, 15 data tables in the RLS note). `database/schema.sql` becomes the authority once it is written.
+- Resolved 2026-10-27: `database/schema.sql` defines 16 tables and is authoritative; RLS covers the same 16 tables.
 - Stage documents 00–17 are not in this repo. `PLAN_PHASE.md` is derived from `CLAUDE.md`, not from those missing files.
 
 ## Update protocol

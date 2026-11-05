@@ -6,17 +6,17 @@ Status values: `not started`, `in progress`, `implemented`, `validated locally`.
 
 | Phase | Name | Status |
 |---|---|---|
-| 1 | Runtime skeleton | in progress |
-| 2 | Persistence and demo data | not started |
-| 3 | Identity and request guards | not started |
-| 4 | Support API | not started |
-| 5 | Knowledge pipeline | not started |
-| 6 | Tools and policy | not started |
-| 7 | Rules and guardrails | not started |
-| 8 | Specialist agents | not started |
+| 1 | Runtime skeleton | validated locally |
+| 2 | Persistence and demo data | validated locally |
+| 3 | Identity and request guards | validated locally |
+| 4 | Support API | validated locally |
+| 5 | Knowledge pipeline | validated locally |
+| 6 | Tools and policy | validated locally |
+| 7 | Rules and guardrails | validated locally |
+| 8 | Specialist agents | in progress |
 | 9 | Workflow graph and trace | not started |
 | 10 | Approval and escalation | not started |
-| 11 | Memory | not started |
+| 11 | Memory | in progress |
 | 12 | Agent console | not started |
 | 13 | Evaluation and delivery | not started |
 
@@ -108,6 +108,8 @@ Course documents 00–17 are not in this repo. This plan is the §19 phase plan 
 
 **Goal.** Every side effect the agents can take is a registered tool with an explicit approval bit.
 
+**Status.** Completed and validated locally on 2026-11-04 (P6-1 through P6-4).
+
 **Requirements.** F9 (policy half).
 
 **Files.** `backend/app/tools/` (`policy.py`, registry, tool functions), `integrations/protocols.py`, `integrations/mock/services.py`, `integrations/factory.py`.
@@ -124,6 +126,8 @@ Course documents 00–17 are not in this repo. This plan is the §19 phase plan 
 
 **Goal.** Policy and safety are deterministic before any specialist calls a model.
 
+**Status.** Completed and validated locally on 2026-11-04 (P7-1 through P7-4).
+
 **Requirements.** F3 (rules), F10 (rule table), N4, N5, N7 (scrub function).
 
 **Files.** `agents/rules.py`, `agents/prompts.py` (`SECURITY_PREAMBLE`, `wrap_untrusted`), `backend/app/core/` guardrails (`scan_for_injection`, `validate_customer_output`, `scrub`).
@@ -139,6 +143,10 @@ Course documents 00–17 are not in this repo. This plan is the §19 phase plan 
 ### Phase 8 — Specialist agents
 
 **Goal.** Six specialists each return their Pydantic model through `call_structured`, using the fake provider.
+
+**Status.** Structured workflow schemas, the offline fake LLM foundation, the support supervisor, and
+the customer-context, knowledge, and troubleshooting specialists are validated locally; two
+specialist implementations and eval cases remain pending.
 
 **Requirements.** F2, F3, F4, F5, F6, F7, F8, F14.
 
@@ -187,6 +195,9 @@ Course documents 00–17 are not in this repo. This plan is the §19 phase plan 
 ### Phase 11 — Memory
 
 **Goal.** Every completed run recalls prior notes and writes scrubbed, de-duplicated memory.
+
+**Status.** Memory facades and recall/record orchestration are validated locally; graph-node wiring
+remains pending until the workflow phase.
 
 **Requirements.** F4 (notes), F11 (write), N7.
 

@@ -2,7 +2,7 @@
 
 CloudDesk is an autonomous customer-support and resolution platform for a fictional SaaS product. It helps support agents understand tickets, retrieve evidence, troubleshoot issues, propose grounded replies, and safely execute or escalate resolutions. Money and account changes always require recorded human approval.
 
-The repository is currently in the specification stage. Application code, tests, sample data, containers, CI, and cloud infrastructure are planned but not yet implemented. See [MEMORY.md](MEMORY.md) for the honest current status.
+The repository currently includes validated runtime, persistence/demo-data, identity/request guards, support APIs, the complete offline knowledge pipeline, deterministic tool policy, registry-enforced support tools, fully offline mock integrations, deterministic escalation/severity rules, prompt-injection containment, customer-output validation, secret scrubbing, both memory tiers, strict workflow schemas, a structured offline fake LLM, the support supervisor, customer-context specialist, cited knowledge specialist, playbook-enriched troubleshooting specialist, and grounded resolution specialist. The escalation specialist, graph integration, the frontend, containers, CI, and cloud infrastructure remain planned. See [MEMORY.md](MEMORY.md) for the honest current status.
 
 ## Target stack
 
@@ -22,9 +22,9 @@ The repository is currently in the specification stage. Application code, tests,
 6. [MEMORY.md](MEMORY.md) — locked decisions and honest delivery status.
 7. [Architecture](docs/ARCHITECTURE.md) and [API contract](docs/API_CONTRACT.md).
 
-## Planned local workflow
+## Local workflow
 
-These commands become available as their phases are implemented; they do not all exist yet.
+Phases 1 and 2 provide these commands:
 
 ```powershell
 make setup
@@ -33,6 +33,14 @@ make ingest
 make backend
 make test
 make lint
+```
+
+Demo authentication uses `admin@clouddesk.demo`, `sam.agent@clouddesk.demo`, or
+`vic.viewer@clouddesk.demo` with the intentionally public local password `clouddesk-demo`.
+
+The following demo commands are planned for later phases and do not exist yet:
+
+```powershell
 make demo
 make demo TICKET=CD-1005
 ```
