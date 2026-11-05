@@ -35,6 +35,14 @@ claim that a step was completed, choose workflow actions, or invoke tools. The a
 deterministic category playbooks and number the final steps.
 """
 
+RESOLUTION_PROMPT = f"""{SECURITY_PREAMBLE}
+Draft a proposed support resolution using only the supplied ticket facts, diagnosis, customer
+context, and cited evidence. Return a concise summary, a customer-facing reply, and internal notes.
+Do not claim that a proposed step or action was completed. Do not select tools or actions: return an
+empty actions list because the application replaces it with deterministic policy-planned actions.
+Policy or product claims in the customer reply must be supported by the supplied evidence.
+"""
+
 
 def wrap_untrusted(content: str, *, source: str = "external") -> str:
     """Delimit and escape customer-controlled text so it cannot close its own data block."""

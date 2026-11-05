@@ -116,6 +116,12 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   blocking diagnosis. Ten deterministic category playbooks enrich probable causes and safe steps,
   active incidents are surfaced first, and final steps are deduplicated and numbered without allowing
   the model to execute tools or actions.
+- P9-6 implements the F8/F9/N5 resolution specialist. It uses `call_structured(ResolutionPlan, ...)`
+  only for the summary, customer reply, and internal notes; model-proposed actions are always
+  discarded. `plan_actions` creates only known write-tool actions from explicit structured inputs and
+  derives approval requirements from `ToolPolicy`. Knowledge citations are appended to the reply,
+  and `validate_customer_output` replaces unsafe replies with a generic review message while retaining
+  safe violation metadata for later risk routing. Planning performs no SQL or tool execution.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -222,13 +228,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-11-05 |
 |---|---|
-| Repository contents | Phases 1 through 7 and the pulled-forward memory track are present. Specialist work now includes the strict workflow/fake-LLM foundation, support supervisor, customer-context, knowledge, and troubleshooting agents; the resolution and escalation specialists, graph integration, runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P9-5. The troubleshooting agent combines structured model diagnosis, registry-enforced service status, and deterministic category playbooks without executing remediation. |
-| Validated locally | 321 tests pass offline. P9-5 verifies grounded diagnosis, all-step numbering, playbook enrichment, active-incident precedence, service-status projection, graceful tool failure, injection containment, token telemetry, and zero fake-provider cost. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No live LLM, external service, graph node, or cloud service was exercised. |
+| Repository contents | Phases 1 through 7 and the pulled-forward memory track are present. Specialist work now includes the strict workflow/fake-LLM foundation, support supervisor, customer-context, knowledge, troubleshooting, and resolution agents; the escalation specialist, graph integration, runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P9-6. The resolution agent drafts grounded content, replaces model actions with deterministic approval-aware plans, and blocks unsafe customer output without executing remediation. |
+| Validated locally | 325 tests pass offline. P9-6 verifies evidence grounding, deterministic action replacement, approval classification for refund and setting-reset plans, customer-output blocking, safe validation metadata, token telemetry, and zero fake-provider cost. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No live LLM, external service, graph node, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 7 and P8-1 through P8-3 are validated locally. The specialist phase is in progress with P9-1 through P9-5 complete; P9-6 through P9-8 remain pending. Original Phase 11 memory still awaits graph-node wiring. |
+| Phase plan | Phases 1 through 7 and P8-1 through P8-3 are validated locally. The specialist phase is in progress with P9-1 through P9-6 complete; P9-7 and P9-8 remain pending. Original Phase 11 memory still awaits graph-node wiring. |
 
 ## Open questions from `CLAUDE.md` §20
 
