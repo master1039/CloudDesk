@@ -15,13 +15,13 @@ It explains:
 
 ## 2. Honest starting point
 
-As of 4 November 2026, Phases 1–7 and the pulled-forward P8-1 through P8-3 memory track are implemented and validated locally. Memory now includes short-term Redis/fakeredis state, scrubbed de-duplicated durable notes, bounded recall, and atomic resolution recording. Graph-node integration remains future work.
+As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, and the P9-1 structured workflow/fake-LLM foundation are implemented and validated locally. The fake provider supplies strict Pydantic outputs, retry metadata, token usage, and zero estimated cost without network access or an API key. Specialist and graph integration remain future work.
 
 The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
-| Specialist agents and fake LLM | Phase 9 | `agents/specialists/`, `backend/app/core/llm.py` |
+| Specialist agents | Phase 9 (P9-2 through P9-7) | `agents/specialists/` |
 | LangGraph workflow and tracing | Phase 10 | `agents/graph.py`, `agents/nodes/`, workflow services |
 | Human approval and escalation | Phase 11 | approval services, graph interrupts, action execution |
 
@@ -381,7 +381,8 @@ Interview explanation: “We use the LLM for judgment, not authority. Determinis
 
 ## 9. Structured outputs
 
-Each specialist returns a Pydantic model, not free-form prose. Planned schemas include concepts such as:
+Each specialist returns a Pydantic model, not free-form prose. P9-1 implements the shared contracts,
+including:
 
 - `Classification`;
 - `SeverityAssessment`;
@@ -399,7 +400,27 @@ Structured outputs provide:
 - testable fields;
 - controlled retries or failures when model output is invalid.
 
-When Phase 9 lands, read `backend/app/schemas/workflow.py` before reading prompts. The schemas tell you what each agent is allowed to produce.
+Start with `backend/app/schemas/workflow.py` before reading future specialist prompts. The schemas tell
+you what each agent is allowed to produce. They reject unknown fields and enforce bounds such as valid
+categories, severity values, confidence from zero to one, and a named team for required escalations.
+
+### 9.1 The offline fake LLM and structured call path
+
+`backend/app/core/llm.py` provides two pieces that every specialist will share:
+
+- `FakeLLM` creates deterministic, schema-shaped responses without a network connection or API key;
+- `call_structured` validates the response, retries bounded failures, and records token usage,
+  duration, estimated cost, provider, model, and attempt count.
+
+The fake provider always records zero cost. Its `ResolutionPlan` contains no actions because choosing
+a tool or deciding whether approval is needed belongs to deterministic application policy, not model
+text. Invalid output is retried, and the final error stays generic so it does not echo customer data
+or secrets from the prompt. A non-fake provider currently fails closed because no production adapter
+has been implemented yet.
+
+Run `uv run pytest tests/agents/test_workflow_foundation.py -vv` and inspect one returned
+`StructuredCallResult`. This shows the exact boundary future specialist agents will use before graph
+orchestration exists.
 
 ## 10. Tools are capabilities, not ordinary helper functions
 
@@ -714,7 +735,9 @@ Goal: distinguish reusable customer context from shared RAG knowledge.
 
 ### Phase 9 — learn each specialist separately
 
-Run one specialist at a time with the fake provider. Read its output schema, rules, prompt, tools, and test before moving to the next specialist.
+First run the P9-1 workflow-foundation tests and inspect the strict schemas plus `FakeLLM`. As P9-2
+through P9-7 land, run one specialist at a time with the fake provider. Read its output schema, rules,
+prompt, tools, and test before moving to the next specialist.
 
 Goal: understand each bounded responsibility without graph complexity.
 

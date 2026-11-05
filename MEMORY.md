@@ -90,6 +90,11 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   `record_resolution` atomically writes one past-issue note, one numbered troubleshooting note capped
   at the first three non-blank steps, and one resolution note. Replays reuse the same rows through the
   long-term fingerprint boundary, and invalid input rolls the complete service write back.
+- P9-1 establishes the F14 structured LLM boundary. Every model-generated value is a strict Pydantic
+  workflow schema, and `call_structured` owns validation, bounded retry, token usage, duration, and
+  estimated cost. `FakeLLM` returns deterministic schema-specific data without network access or an
+  API key, costs `0.0`, and leaves resolution actions empty for deterministic planning. Non-fake
+  providers fail closed until their adapters are implemented.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -194,15 +199,15 @@ Cases live in `datasets/eval_cases.json` and each case needs a valid `expected_c
 
 Update each row in place. Do not mark a row done from intention.
 
-| Surface | State on 2026-11-04 |
+| Surface | State on 2026-11-05 |
 |---|---|
-| Repository contents | Phases 1 through 7 are present, and the pulled-forward Phase 8 memory track includes short-term Redis state, durable customer notes, and recall/record orchestration. Specialist agents, graph-node integration, the runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P8-3. Memory can recall a bounded safe customer history and atomically record the past issue, first three troubleshooting steps, and resolution note without duplicating a replayed run. |
-| Validated locally | 276 tests pass offline. P8-3 validates three-group recording, three-step bounding, secret scrubbing, source attribution, replay idempotency, ten-note recall, safe projections, structured-step validation, and complete rollback on invalid input. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No LLM call, live external service, graph node, or cloud service was exercised. |
+| Repository contents | Phases 1 through 7 and the pulled-forward memory track are present. Specialist work has started with strict workflow schemas and the offline fake LLM; the six specialists, graph integration, runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P9-1. Model calls now have one structured boundary with validated outputs, retry metadata, deterministic offline responses, token accounting, and zero fake-provider cost. |
+| Validated locally | 286 tests pass offline. P9-1 validates strict workflow schemas, domain bounds, deterministic classification/severity, valid defaults for every model-generated contract, empty deterministic actions, retry and usage accumulation, generic failure messages, zero cost, and fake-provider operation without an API key. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No live LLM, external service, graph node, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 7 and the pulled-forward P8-1 through P8-3 memory tasks are validated locally. Original Phase 11 memory remains in progress until its future graph nodes call the service. Other later phases are not started. |
+| Phase plan | Phases 1 through 7 and P8-1 through P8-3 are validated locally. The specialist phase is in progress with P9-1 complete; P9-2 through P9-8 remain pending. Original Phase 11 memory still awaits graph-node wiring. |
 
 ## Open questions from `CLAUDE.md` §20
 
