@@ -5,6 +5,7 @@ from .prompts import (
     SUPERVISOR_CLASSIFICATION_PROMPT,
     SUPERVISOR_SEVERITY_PROMPT,
     SUPERVISOR_SUMMARY_PROMPT,
+    TROUBLESHOOTING_PROMPT,
     wrap_untrusted,
 )
 from .rules import (
@@ -25,6 +26,7 @@ __all__ = [
     "SUPERVISOR_CLASSIFICATION_PROMPT",
     "SUPERVISOR_SEVERITY_PROMPT",
     "SUPERVISOR_SUMMARY_PROMPT",
+    "TROUBLESHOOTING_PROMPT",
     "CategoryDecision",
     "EscalationPolicyDecision",
     "EscalationRule",

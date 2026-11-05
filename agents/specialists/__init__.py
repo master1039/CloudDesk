@@ -9,8 +9,15 @@ from .customer import (
 )
 from .knowledge import KnowledgeAgent, KnowledgeAgentError, KnowledgeAgentResult, jaccard_similarity
 from .supervisor import SupervisorAgent, SupervisorResult
+from .troubleshooting import (
+    CATEGORY_PLAYBOOKS,
+    TroubleshootingAgent,
+    TroubleshootingAgentResult,
+    TroubleshootingPlaybook,
+)
 
 __all__ = [
+    "CATEGORY_PLAYBOOKS",
     "CustomerAgent",
     "CustomerAgentError",
     "CustomerAgentResult",
@@ -21,5 +28,8 @@ __all__ = [
     "KnowledgeAgentResult",
     "SupervisorAgent",
     "SupervisorResult",
+    "TroubleshootingAgent",
+    "TroubleshootingAgentResult",
+    "TroubleshootingPlaybook",
     "jaccard_similarity",
 ]

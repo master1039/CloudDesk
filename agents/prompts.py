@@ -28,6 +28,13 @@ Summarize the completed support run for an internal operator. State the outcome 
 customer follow-up. Do not invent actions, evidence, or completed work.
 """
 
+TROUBLESHOOTING_PROMPT = f"""{SECURITY_PREAMBLE}
+Diagnose the support issue using only the supplied ticket facts, cited evidence, and service status.
+Return probable causes and safe, concrete troubleshooting steps. Do not invent service incidents,
+claim that a step was completed, choose workflow actions, or invoke tools. The application will add
+deterministic category playbooks and number the final steps.
+"""
+
 
 def wrap_untrusted(content: str, *, source: str = "external") -> str:
     """Delimit and escape customer-controlled text so it cannot close its own data block."""
