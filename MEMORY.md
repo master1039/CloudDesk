@@ -128,6 +128,13 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   accepted only for unmatched high-impact cases with low diagnosis confidence, and model-invented
   policy identifiers are removed. The separate `escalate` method invokes `create_escalation` only
   through `ToolRegistry`, keeping assessment and side effects separated for future graph nodes.
+- P9-8 establishes the version-one offline evaluation corpus in `datasets/eval_cases.json`. Sixteen
+  fictional cases cover all ten ticket categories, all fifteen knowledge articles, and all six
+  deterministic escalation rule classes. Each case declares category, severity, retrieval article,
+  grounding phrases, plan context, attributes, and expected escalation route. Contract tests reject
+  duplicate IDs, invalid enums, missing knowledge references, unsupported grounding phrases, and
+  policy expectations that disagree with the deterministic rule table. Phase 13 still owns metric
+  calculation and threshold enforcement.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -234,13 +241,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-11-05 |
 |---|---|
-| Repository contents | Phases 1 through 7 and the pulled-forward memory track are present. Specialist work now includes the strict workflow/fake-LLM foundation and all six bounded agents; the evaluation dataset, graph integration, runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P9-7. The escalation agent applies mandatory named routes over model judgement, constrains grey-area escalation, and uses the registry-only safe escalation path. |
-| Validated locally | 330 tests pass offline. P9-7 verifies policy precedence, rejection of vague model escalation, bounded grey-area judgement, model-policy sanitization, registry-only escalation execution, token telemetry, and zero fake-provider cost. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No live LLM, external service, graph node, or cloud service was exercised. |
+| Repository contents | Phases 1 through 8 and the pulled-forward memory track are present. Specialist work includes the strict workflow/fake-LLM foundation, all six bounded agents, and the initial evaluation corpus; the metric harness, graph integration, runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P9-8. The initial 16-case evaluation corpus covers every ticket category, knowledge article, and deterministic escalation rule class with explicit expected outcomes. |
+| Validated locally | 334 tests pass offline. P9-8 verifies unique bounded cases, valid category and severity enums, complete category and knowledge coverage, supported grounding phrases, and exact agreement with deterministic escalation policy. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. Phase 13 metrics were not calculated, and no live LLM, external service, graph node, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 7 and P8-1 through P8-3 are validated locally. All six specialist implementations, P9-1 through P9-7, are complete; P9-8 eval cases remain pending. Original Phase 11 memory still awaits graph-node wiring. |
+| Phase plan | Phases 1 through 8 and P8-1 through P8-3 are validated locally. TASKS Phase 9 is complete through P9-8; workflow graph work is next. Original Phase 11 memory still awaits graph-node wiring. |
 
 ## Open questions from `CLAUDE.md` §20
 

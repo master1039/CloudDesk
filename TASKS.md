@@ -136,7 +136,7 @@ Sub-tasks in the same phase that do not share files can be open at the same time
 | P9-5 · Troubleshooting agent | `feature/agent-troubleshooting` | Completed ✅ |
 | P9-6 · Resolution agent | `feature/agent-resolution` | Completed ✅ |
 | P9-7 · Escalation agent | `feature/agent-escalation` | Completed ✅ |
-| P9-8 · Eval case dataset | `feature/agent-eval-cases` | Pending ❌ |
+| P9-8 · Eval case dataset | `feature/agent-eval-cases` | Completed ✅ |
 
 ---
 
