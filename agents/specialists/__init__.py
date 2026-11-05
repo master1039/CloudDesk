@@ -7,6 +7,7 @@ from .customer import (
     CustomerMemoryReader,
     CustomerNotFoundError,
 )
+from .knowledge import KnowledgeAgent, KnowledgeAgentError, KnowledgeAgentResult, jaccard_similarity
 from .supervisor import SupervisorAgent, SupervisorResult
 
 __all__ = [
@@ -15,6 +16,10 @@ __all__ = [
     "CustomerAgentResult",
     "CustomerMemoryReader",
     "CustomerNotFoundError",
+    "KnowledgeAgent",
+    "KnowledgeAgentError",
+    "KnowledgeAgentResult",
     "SupervisorAgent",
     "SupervisorResult",
+    "jaccard_similarity",
 ]

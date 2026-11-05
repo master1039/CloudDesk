@@ -15,13 +15,13 @@ It explains:
 
 ## 2. Honest starting point
 
-As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, the P9-1 structured workflow/fake-LLM foundation, the P9-2 support supervisor, and the P9-3 customer-context specialist are implemented and validated locally. The customer specialist uses policy-enforced reads and durable memory recall without calling an LLM. The remaining specialists and graph integration remain future work.
+As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, and P9-1 through P9-4 are implemented and validated locally. The knowledge specialist now connects registry-enforced hybrid retrieval to strict citations and deterministic similar-case ranking without calling an LLM. The remaining specialists and graph integration remain future work.
 
 The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
-| Remaining specialist agents | Phase 9 (P9-4 through P9-7) | `agents/specialists/` |
+| Remaining specialist agents | Phase 9 (P9-5 through P9-7) | `agents/specialists/` |
 | LangGraph workflow and tracing | Phase 10 | `agents/graph.py`, `agents/nodes/`, workflow services |
 | Human approval and escalation | Phase 11 | approval services, graph interrupts, action execution |
 
@@ -453,6 +453,20 @@ to ten. Extra tool fields such as billing amounts, timestamps, and internal reco
 enter workflow state. Run `uv run pytest tests/agents/test_customer.py -vv` and observe that token
 usage and model cost remain zero.
 
+### 9.4 The knowledge specialist
+
+`agents/specialists/knowledge.py` combines two evidence sources without generating new facts:
+
+1. `search_docs` runs through `ToolRegistry`, reusing hybrid semantic and BM25 retrieval;
+2. caller-supplied resolved cases are ranked by Jaccard token overlap with the current issue.
+
+Knowledge results remain strict citations containing article identity, source, snippet, score, and a
+safe knowledge URL. Duplicate chunks from the same article are removed. Similarity scores are
+deterministic, and display/ticket identifiers provide stable tie-breaking. The specialist makes no
+model call, so token usage and model cost are zero. Run
+`uv run pytest tests/agents/test_knowledge.py -vv` and compare the API-rate-limit case with unrelated
+storage and MFA cases.
+
 ## 10. Tools are capabilities, not ordinary helper functions
 
 P6-2 implements the first five read-only tools below, and P6-3 implements the four controlled write tools:
@@ -767,7 +781,7 @@ Goal: distinguish reusable customer context from shared RAG knowledge.
 ### Phase 9 — learn each specialist separately
 
 First run the P9-1 workflow-foundation tests and inspect the strict schemas plus `FakeLLM`, then study
-the P9-2 supervisor and P9-3 customer agent. As P9-4 through P9-7 land, run one specialist at a time with the fake provider. Read its output schema, rules,
+the P9-2 supervisor, P9-3 customer agent, and P9-4 knowledge agent. As P9-5 through P9-7 land, run one specialist at a time with the fake provider. Read its output schema, rules,
 prompt, tools, and test before moving to the next specialist.
 
 Goal: understand each bounded responsibility without graph complexity.

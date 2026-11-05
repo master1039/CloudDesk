@@ -93,6 +93,16 @@ history, and customer ownership is rechecked across subscription, history, and m
 state is returned. The agent reports tool-call timing data with zero tokens and zero model cost; it
 does not import repositories or access SQL directly.
 
+## Knowledge specialist boundary
+
+P9-4 implements `agents.specialists.KnowledgeAgent` for F5 and F6 without an LLM call. Knowledge-base
+retrieval always passes through `ToolRegistry.execute("search_docs", ...)`, preserving the existing
+hybrid semantic/BM25 fusion, heuristic reranking, cache, and citation boundary. The specialist
+projects only strict `Evidence` fields, deduplicates by article, and returns at most ten results.
+Caller-supplied resolved cases are ranked independently using deterministic token-set Jaccard overlap
+with stable tie-breaking. Tool failures fail closed, and the result exposes traceable tool metadata
+with zero tokens and zero model cost.
+
 ## Secret-scrubbing boundary
 
 `backend.app.core.guardrails.scrub` is the deterministic N7 boundary for text that may later enter
