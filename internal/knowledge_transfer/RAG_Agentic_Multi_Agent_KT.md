@@ -15,13 +15,13 @@ It explains:
 
 ## 2. Honest starting point
 
-As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, and P9-1 through P9-4 are implemented and validated locally. The knowledge specialist now connects registry-enforced hybrid retrieval to strict citations and deterministic similar-case ranking without calling an LLM. The remaining specialists and graph integration remain future work.
+As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, and P9-1 through P9-5 are implemented and validated locally. The troubleshooting specialist combines structured model diagnosis with registry-enforced service status and deterministic category playbooks. Resolution, escalation, and graph integration remain future work.
 
 The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
-| Remaining specialist agents | Phase 9 (P9-5 through P9-7) | `agents/specialists/` |
+| Remaining specialist agents | Phase 9 (P9-6 and P9-7) | `agents/specialists/` |
 | LangGraph workflow and tracing | Phase 10 | `agents/graph.py`, `agents/nodes/`, workflow services |
 | Human approval and escalation | Phase 11 | approval services, graph interrupts, action execution |
 
@@ -467,6 +467,22 @@ model call, so token usage and model cost are zero. Run
 `uv run pytest tests/agents/test_knowledge.py -vv` and compare the API-rate-limit case with unrelated
 storage and MFA cases.
 
+### 9.5 The troubleshooting specialist
+
+`agents/specialists/troubleshooting.py` demonstrates the rules-plus-model pattern for diagnosis:
+
+1. the ticket category selects a deterministic service and troubleshooting playbook;
+2. `check_service_status` runs through `ToolRegistry`;
+3. ticket text, citations, and status are wrapped as untrusted model input;
+4. `call_structured` returns a validated `Diagnosis`;
+5. playbook causes and steps enrich the result, and every final step is numbered.
+
+An active incident is checked before customer configuration is changed. If the status tool fails, the
+agent records that call and continues with status `unavailable`. It proposes diagnostic checks only;
+it cannot invoke refunds, resets, or any other remediation. Run
+`uv run pytest tests/agents/test_troubleshooting.py -vv` and compare SSO degradation, storage quota,
+and the injected tool-coercion case.
+
 ## 10. Tools are capabilities, not ordinary helper functions
 
 P6-2 implements the first five read-only tools below, and P6-3 implements the four controlled write tools:
@@ -781,7 +797,7 @@ Goal: distinguish reusable customer context from shared RAG knowledge.
 ### Phase 9 — learn each specialist separately
 
 First run the P9-1 workflow-foundation tests and inspect the strict schemas plus `FakeLLM`, then study
-the P9-2 supervisor, P9-3 customer agent, and P9-4 knowledge agent. As P9-5 through P9-7 land, run one specialist at a time with the fake provider. Read its output schema, rules,
+the P9-2 supervisor, P9-3 customer agent, P9-4 knowledge agent, and P9-5 troubleshooting agent. As P9-6 and P9-7 land, run one specialist at a time with the fake provider. Read its output schema, rules,
 prompt, tools, and test before moving to the next specialist.
 
 Goal: understand each bounded responsibility without graph complexity.

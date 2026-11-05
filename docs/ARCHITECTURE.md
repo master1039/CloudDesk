@@ -103,6 +103,17 @@ Caller-supplied resolved cases are ranked independently using deterministic toke
 with stable tie-breaking. Tool failures fail closed, and the result exposes traceable tool metadata
 with zero tokens and zero model cost.
 
+## Troubleshooting specialist boundary
+
+P9-5 implements `agents.specialists.TroubleshootingAgent` for F7. It checks the category-mapped
+service only through `ToolRegistry.execute("check_service_status", ...)`, then wraps the ticket,
+cited evidence, and projected status as untrusted data for `call_structured(Diagnosis, ...)`. Ten
+immutable category playbooks enrich the model result with deterministic probable causes and safe
+checks. Active incidents are surfaced before configuration changes, final steps are deduplicated and
+renumbered, and status-tool failure becomes an explicit `unavailable` status rather than aborting the
+diagnosis. The specialist exposes model/tool telemetry but never executes remediation or chooses
+workflow actions.
+
 ## Secret-scrubbing boundary
 
 `backend.app.core.guardrails.scrub` is the deterministic N7 boundary for text that may later enter
