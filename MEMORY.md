@@ -105,6 +105,11 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   come through the memory facade. Explicit projections remove extra tool fields, current tickets are
   excluded, both history and memory are capped at 10, and every returned owner is checked against the
   requested customer before a strict `CustomerContext` is created.
+- P9-4 implements the F5/F6 knowledge specialist without an LLM. Cited hybrid retrieval runs only
+  through `ToolRegistry.execute("search_docs", ...)`; returned evidence is strictly projected,
+  deduplicated by article, and bounded to 10. Caller-supplied resolved cases are ranked with
+  deterministic token-set Jaccard overlap and stable tie-breaking. Retrieval and case ranking report
+  zero tokens and zero model cost.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -211,13 +216,13 @@ Update each row in place. Do not mark a row done from intention.
 
 | Surface | State on 2026-11-05 |
 |---|---|
-| Repository contents | Phases 1 through 7 and the pulled-forward memory track are present. Specialist work now includes the strict workflow/fake-LLM foundation, support supervisor, and customer-context agent; the other four specialists, graph integration, runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P9-3. The customer agent assembles strict identity, subscription, workspace, previous-ticket, and safe-memory context through policy-enforced reads with no model call. |
-| Validated locally | 310 tests pass offline. P9-3 verifies complete customer context, workspace storage totals, current-ticket exclusion, bounded safe memory, registry-only tool calls, missing-customer handling, ownership isolation, zero token usage, and zero model cost. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No live LLM, external service, graph node, or cloud service was exercised. |
+| Repository contents | Phases 1 through 7 and the pulled-forward memory track are present. Specialist work now includes the strict workflow/fake-LLM foundation, support supervisor, customer-context agent, and knowledge agent; the other three specialists, graph integration, runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P9-4. The knowledge agent returns bounded cited evidence through the registry and deterministic similar resolved cases without a model call. |
+| Validated locally | 315 tests pass offline. P9-4 verifies hybrid cited retrieval, article deduplication, registry-only search, deterministic Jaccard ranking and tie-breaking, fail-closed tool handling, request bounds, zero token usage, and zero model cost. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No live LLM, external service, graph node, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 7 and P8-1 through P8-3 are validated locally. The specialist phase is in progress with P9-1 through P9-3 complete; P9-4 through P9-8 remain pending. Original Phase 11 memory still awaits graph-node wiring. |
+| Phase plan | Phases 1 through 7 and P8-1 through P8-3 are validated locally. The specialist phase is in progress with P9-1 through P9-4 complete; P9-5 through P9-8 remain pending. Original Phase 11 memory still awaits graph-node wiring. |
 
 ## Open questions from `CLAUDE.md` §20
 
