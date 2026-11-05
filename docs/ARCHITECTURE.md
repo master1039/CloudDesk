@@ -127,6 +127,18 @@ passes through `validate_customer_output`. A failed gate is retained as safe ris
 reply is replaced by a generic agent-review message. The specialist plans only; it neither executes
 tools nor writes SQL.
 
+## Escalation specialist boundary
+
+P9-7 implements `agents.specialists.EscalationAgent` for F10 and N4 with separate assessment and
+execution boundaries. `assess_risk` wraps customer text and ticket attributes as untrusted input,
+obtains a strict `EscalationDecision` through `call_structured`, and then applies
+`policy_escalation`. Mandatory security, data-loss, deletion, dispute, legal, and enterprise-outage
+rules replace the model's team, reason, priority, and confidence. For unmatched cases, model
+escalation is retained only when impact is high or critical and diagnosis confidence is below the
+fixed threshold; model-invented policy identifiers are always removed. `escalate` accepts only a
+required decision with a named team and calls `create_escalation` through `ToolRegistry.execute`.
+This maps directly onto the future `risk_check` and `escalation` graph nodes without direct SQL.
+
 ## Secret-scrubbing boundary
 
 `backend.app.core.guardrails.scrub` is the deterministic N7 boundary for text that may later enter

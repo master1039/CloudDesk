@@ -15,13 +15,13 @@ It explains:
 
 ## 2. Honest starting point
 
-As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, and P9-1 through P9-6 are implemented and validated locally. The resolution specialist grounds customer replies, replaces model-proposed actions with deterministic plans, and blocks unsafe output. Escalation and graph integration remain future work.
+As of 5 November 2026, Phases 1–7, the pulled-forward P8 memory track, and P9-1 through P9-7 are implemented and validated locally. All six specialists now run offline: the escalation specialist guarantees that mandatory policy routes override model judgement and sends approved routing writes through the tool registry. Eval cases and graph integration remain future work.
 
 The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
-| Remaining specialist agent | Phase 9 (P9-7) | `agents/specialists/` |
+| Initial evaluation cases | Phase 9 (P9-8) | `datasets/eval_cases.json` |
 | LangGraph workflow and tracing | Phase 10 | `agents/graph.py`, `agents/nodes/`, workflow services |
 | Human approval and escalation | Phase 11 | approval services, graph interrupts, action execution |
 
@@ -501,6 +501,23 @@ review. It does not execute any planned action; later workflow nodes own approva
 `uv run pytest tests/agents/test_resolution.py -vv` to see model-invented actions removed, citations
 added, approval flags applied, and unsafe replies blocked.
 
+### 9.7 The escalation specialist
+
+`agents/specialists/escalation.py` is the clearest example of rules taking precedence over AI:
+
+1. ticket text and attributes enter the model prompt only as untrusted data;
+2. `call_structured` returns a typed model recommendation for grey-area cases;
+3. `policy_escalation` independently checks the six mandatory rule classes;
+4. when a rule matches, its team, reason, priority, and rule IDs replace the model result;
+5. without a rule, model escalation is accepted only for a high-impact case whose diagnosis remains
+   uncertain;
+6. `escalate` sends the final decision through `ToolRegistry.execute("create_escalation", ...)`.
+
+Assessment does not write anything, while execution cannot bypass the shared tool boundary. Run
+`uv run pytest tests/agents/test_escalation.py -vv` to compare a model-selected team with the
+mandatory Security Response route, see a vague low-risk escalation rejected, and verify the registry
+call used by the future graph node.
+
 ## 10. Tools are capabilities, not ordinary helper functions
 
 P6-2 implements the first five read-only tools below, and P6-3 implements the four controlled write tools:
@@ -815,8 +832,8 @@ Goal: distinguish reusable customer context from shared RAG knowledge.
 ### Phase 9 — learn each specialist separately
 
 First run the P9-1 workflow-foundation tests and inspect the strict schemas plus `FakeLLM`, then study
-the P9-2 supervisor, P9-3 customer agent, P9-4 knowledge agent, P9-5 troubleshooting agent, and P9-6
-resolution agent. As P9-7 lands, run it with the fake provider. Read each specialist's output schema, rules,
+the P9-2 supervisor, P9-3 customer agent, P9-4 knowledge agent, P9-5 troubleshooting agent, P9-6
+resolution agent, and P9-7 escalation agent. Run each with the fake provider. Read each specialist's output schema, rules,
 prompt, tools, and test before moving to the next specialist.
 
 Goal: understand each bounded responsibility without graph complexity.

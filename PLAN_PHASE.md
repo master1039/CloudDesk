@@ -144,17 +144,17 @@ Course documents 00–17 are not in this repo. This plan is the §19 phase plan 
 
 **Goal.** Six specialists each return their Pydantic model through `call_structured`, using the fake provider.
 
-**Status.** Structured workflow schemas, the offline fake LLM foundation, and the supervisor,
-customer-context, knowledge, troubleshooting, and resolution specialists are validated locally; the
-escalation specialist and eval cases remain pending.
+**Status.** Structured workflow schemas, the offline fake LLM foundation, and all six specialists are
+validated locally; the initial eval cases remain pending.
 
-**Requirements.** F2, F3, F4, F5, F6, F7, F8, F14.
+**Requirements.** F2, F3, F4, F5, F6, F7, F8, F10, F14.
 
 **Files.** `agents/specialists/`, `agents/prompts.py`, `backend/app/schemas/workflow.py`, `backend/app/core/llm.py` fake provider, `tests/agents/`, `datasets/eval_cases.json` (initial cases).
 
-**Tests.** One test per specialist: classification plus one-line summary, severity with reason, customer context with no model call, evidence plus similar cases, diagnosis with numbered steps, resolution plan whose actions come from `plan_actions` and whose reply is grounded and validated. Fake provider cost is `0.0`.
+**Tests.** One test per specialist: classification plus one-line summary, severity with reason, customer context with no model call, evidence plus similar cases, diagnosis with numbered steps, resolution plan whose actions come from `plan_actions` and whose reply is grounded and validated, and escalation where policy rules override model judgement. Fake provider cost is `0.0`.
 
-**Demo checkpoint.** Each specialist can be invoked on `CD-1002` and `CD-1010` offline. `CD-1010` remains low severity.
+**Demo checkpoint.** Each specialist can be invoked offline. `CD-1010` remains low severity, while
+`CD-1005`, `CD-1006`, `CD-1009`, and `CD-1011` receive their mandatory named policy routes.
 
 **Exit.** No specialist writes SQL. No specialist calls a tool except through `ToolRegistry`. Eval cases use a valid `expected_category`.
 

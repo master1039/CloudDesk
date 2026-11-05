@@ -7,6 +7,7 @@ from .customer import (
     CustomerMemoryReader,
     CustomerNotFoundError,
 )
+from .escalation import EscalationAgent, EscalationAgentResult
 from .knowledge import KnowledgeAgent, KnowledgeAgentError, KnowledgeAgentResult, jaccard_similarity
 from .resolution import ResolutionAgent, ResolutionAgentResult
 from .supervisor import SupervisorAgent, SupervisorResult
@@ -24,6 +25,8 @@ __all__ = [
     "CustomerAgentResult",
     "CustomerMemoryReader",
     "CustomerNotFoundError",
+    "EscalationAgent",
+    "EscalationAgentResult",
     "KnowledgeAgent",
     "KnowledgeAgentError",
     "KnowledgeAgentResult",
