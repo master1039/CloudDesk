@@ -73,6 +73,16 @@ attempt count, and estimated cost without exposing raw prompts. `FakeLLM` produc
 outputs offline, needs no API key, reports zero cost, and emits no planned actions because actions are
 owned by deterministic policy. Non-fake providers fail closed until an explicit adapter is added.
 
+## Support supervisor boundary
+
+P9-2 implements `agents.specialists.SupervisorAgent` for F2, F3, and the future F11 summary node.
+Subjects, bodies, workflow outcomes, and follow-up text are wrapped as untrusted data before every
+model call. Classification retains injection signal names for later risk routing, while narrow
+deterministic rules enforce security, billing-dispute, and account-deletion categories when model
+judgement conflicts with policy. Severity is model-assisted but `rule_severity` can only raise the
+result. The specialist returns validated output plus token, duration, cost, provider, attempt,
+injection, and applied-policy metadata; it neither calls tools nor writes persistence directly.
+
 ## Secret-scrubbing boundary
 
 `backend.app.core.guardrails.scrub` is the deterministic N7 boundary for text that may later enter

@@ -159,6 +159,16 @@ class SeverityDecision:
     policy_rules: tuple[str, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class CategoryDecision:
+    """Final category plus deterministic policy evidence."""
+
+    category: TicketCategory
+    reason: str
+    overridden: bool
+    policy_rules: tuple[str, ...]
+
+
 def _category(value: TicketCategory | str | None) -> TicketCategory | None:
     if value is None or isinstance(value, TicketCategory):
         return value
@@ -212,6 +222,55 @@ def policy_escalation(
         reason=primary.reason,
         priority=priority,
         policy_rules=tuple(rule.rule_id for rule in matches),
+    )
+
+
+def rule_category(
+    model_category: TicketCategory | str,
+    text: str = "",
+    *,
+    plan_name: str | None = None,
+    attributes: Mapping[str, Any] | None = None,
+    injection_detected: bool = False,
+) -> CategoryDecision:
+    """Apply narrow safety-category overrides while retaining ordinary model classifications."""
+
+    current = model_category if isinstance(model_category, TicketCategory) else TicketCategory(
+        model_category
+    )
+    matches = matching_escalation_rules(
+        text,
+        plan_name,
+        category=None,
+        attributes=attributes,
+    )
+    policy_rules = tuple(rule.rule_id for rule in matches)
+    matched_ids = set(policy_rules)
+
+    if injection_detected or "security_incident" in matched_ids:
+        category = TicketCategory.SECURITY
+        reason = "Security category enforced by deterministic safety signals."
+        if injection_detected and "prompt_injection" not in matched_ids:
+            policy_rules = (*policy_rules, "prompt_injection")
+    elif "payment_dispute" in matched_ids:
+        category = TicketCategory.BILLING
+        reason = "Billing category enforced by the payment-dispute policy."
+    elif "account_deletion" in matched_ids:
+        category = TicketCategory.ACCOUNT
+        reason = "Account category enforced by the deletion policy."
+    else:
+        return CategoryDecision(
+            category=current,
+            reason="Model category retained; no deterministic category rule matched.",
+            overridden=False,
+            policy_rules=policy_rules,
+        )
+
+    return CategoryDecision(
+        category=category,
+        reason=reason,
+        overridden=category != current,
+        policy_rules=policy_rules,
     )
 
 

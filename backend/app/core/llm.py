@@ -9,6 +9,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from decimal import Decimal
 from functools import lru_cache
+from html import unescape
 from time import perf_counter
 from typing import Any, Literal, Protocol
 
@@ -18,6 +19,10 @@ from app.schemas.workflow import TokenUsage
 from pydantic import BaseModel, ValidationError
 
 _TOKEN_PATTERN = re.compile(r"[A-Za-z0-9_]+")
+_UNTRUSTED_BLOCK_PATTERN = re.compile(
+    r'<untrusted_content\s+source="[^"]*">\s*(.*?)\s*</untrusted_content>',
+    flags=re.DOTALL,
+)
 
 
 class LLMConfigurationError(RuntimeError):
@@ -72,7 +77,9 @@ def _word_count(value: str) -> int:
 
 
 def _request_text(messages: Sequence[LLMMessage]) -> str:
-    return "\n".join(message.content for message in messages if message.role == "user")
+    text = "\n".join(message.content for message in messages if message.role == "user")
+    blocks = _UNTRUSTED_BLOCK_PATTERN.findall(text)
+    return "\n".join(unescape(block) for block in blocks) if blocks else text
 
 
 def _category(text: str) -> TicketCategory:
