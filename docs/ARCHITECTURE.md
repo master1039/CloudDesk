@@ -222,6 +222,21 @@ flowchart TD
 
 The graph persists state after every node. `errors` and `completed_nodes` append through reducers. Code before `interrupt()` must be small and idempotent because it runs again on resume.
 
+## Support state and checkpoint persistence
+
+P10-1 defines `agents.state.SupportState` as the partial typed contract shared by future graph nodes.
+It holds ticket identity and untrusted input, every strict specialist result, routing/approval data,
+and trace aggregates. Reducers return new values: `completed_nodes` and scrubbed `errors` append in
+order, while `TokenUsage` and decimal model cost add. Nodes therefore return only their changed fields
+without erasing prior workflow history.
+
+`agents.checkpointer.create_checkpointer` owns saver lifecycle. `CHECKPOINT_DB_PATH=:memory:` selects
+LangGraph's `InMemorySaver` for offline tests. A file path creates its parent directory, opens an
+`AsyncSqliteSaver`, initializes its tables, and closes the connection when the context exits. The
+serializer explicitly allowlists CloudDesk workflow schemas, enums, and output-validation types
+instead of permitting arbitrary checkpoint type reconstruction. The default `data/checkpoints.db`
+and all `*.db` files remain excluded by the repository ignore rules.
+
 ## Run and approval sequence
 
 ```mermaid

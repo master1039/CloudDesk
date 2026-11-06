@@ -164,6 +164,10 @@ specialists, and the initial evaluation cases are present and covered by offline
 
 **Goal.** One graph runs a low-risk ticket to the end, persists state after every node, and records inspectable events.
 
+**Status.** In progress. The typed partial state, additive reducers, in-memory test checkpointer, and
+file-backed async SQLite checkpointer are validated locally; graph nodes, wiring, services, and trace
+APIs remain pending.
+
 **Requirements.** F11 (summary node), F13, graph shape in §7.3.
 
 **Files.** `agents/state.py`, `agents/graph.py`, `agents/checkpointer.py`, `agents/nodes/`, workflow service (`create_run`, `start_workflow`), `GET /tickets/{id}/workflow`, `GET /tickets/{id}/events`.

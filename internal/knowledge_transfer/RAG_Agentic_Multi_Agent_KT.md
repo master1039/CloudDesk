@@ -15,14 +15,14 @@ It explains:
 
 ## 2. Honest starting point
 
-As of 5 November 2026, Phases 1–8, the pulled-forward memory track, and TASKS P9-1 through P9-8 are implemented and validated locally. All six specialists run offline, and sixteen evaluation cases now define expected classification, retrieval, grounding, and escalation outcomes. Metric calculation and graph integration remain future work.
+As of 6 November 2026, Phases 1–8, the pulled-forward memory track, TASKS P9-1 through P9-8, and P10-1 are implemented and validated locally. All six specialists run offline, sixteen evaluation cases define expected outcomes, and typed workflow state can be checkpointed in memory or SQLite. Graph nodes, wiring, tracing, and metric calculation remain future work.
 
 The following learning surfaces are **planned but not implemented yet**:
 
 | Area | TASKS.md phase | Planned location |
 |---|---:|---|
 | Evaluation metric harness | Phase 13 | `tests/evaluation/` |
-| LangGraph workflow and tracing | Phase 10 | `agents/graph.py`, `agents/nodes/`, workflow services |
+| LangGraph nodes, wiring, and tracing | Phase 10 (P10-2–P10-6) | `agents/graph.py`, `agents/nodes/`, workflow services |
 | Human approval and escalation | Phase 11 | approval services, graph interrupts, action execution |
 
 Do not interpret the design in this guide as proof that these modules already run. Use `TASKS.md`, `PLAN_PHASE.md`, and `MEMORY.md` for the current implementation status.
@@ -627,6 +627,16 @@ Reducer fields have special behavior:
 
 If a node replaces these fields rather than returning the correct partial update, previous history disappears.
 
+P10-1 implements this contract in `agents/state.py`. `SupportState` is deliberately partial so each
+node can return only what it owns. `append_items` preserves ordered node/error history, `merge_usage`
+adds prompt and completion tokens, and `merge_cost` adds decimal cost without floating-point drift.
+
+`agents/checkpointer.py` then makes that state resumable. Tests use `:memory:` for isolation and speed;
+local runtime uses async SQLite so a workflow survives process work between graph calls. The saver is
+opened through an async context manager, and its deserializer accepts only explicitly listed
+CloudDesk state types. Run `uv run pytest tests/workflow/test_state_checkpointer.py -vv` and inspect
+the close/reopen test to see the typed classification and reducer history restored from disk.
+
 ## 12.3 Node anatomy
 
 The planned node pattern is:
@@ -856,11 +866,11 @@ Goal: understand each bounded responsibility without graph complexity.
 
 ### Phase 10 — learn orchestration
 
-1. Read state and reducers.
-2. Read nodes in graph order.
-3. Inspect edges and conditional branches.
-4. Run a complete fake-provider workflow.
-5. Inspect persisted state and events after every node.
+1. Read the implemented state reducers and checkpointer lifecycle.
+2. Compare `:memory:` with the SQLite close/reopen test.
+3. As later tasks land, read nodes in graph order.
+4. Inspect edges and conditional branches.
+5. Run a complete fake-provider workflow and inspect persisted events.
 
 Goal: understand how correct local components become one resumable state machine.
 

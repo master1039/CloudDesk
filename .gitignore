@@ -66,3 +66,9 @@ service-account*.json
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Added by Euron Code
+.euron/cache/
+.euron/knowledge/
+.euron/security/
+.euron/settings.local.json

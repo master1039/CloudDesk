@@ -147,7 +147,7 @@ Sub-tasks in the same phase that do not share files can be open at the same time
 
 | Task | Branch | Status |
 |------|--------|--------|
-| P10-1 · Support state and checkpointer | `feature/graph-state-checkpointer` | Pending ❌ |
+| P10-1 · Support state and checkpointer | `feature/graph-state-checkpointer` | Completed ✅ |
 | P10-2 · Supervisor graph nodes | `feature/graph-nodes-supervisor` | Pending ❌ |
 | P10-3 · Investigate graph nodes | `feature/graph-nodes-investigate` | Pending ❌ |
 | P10-4 · Resolution and risk nodes | `feature/graph-nodes-resolution` | Pending ❌ |
