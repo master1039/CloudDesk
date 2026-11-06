@@ -1,0 +1,12 @@
+{
+  "_comment": "Example hooks, NOT active. Run /hooks enable to copy them into .euron/settings.json (they are pre-trusted because Euron Code wrote them). Edit freely.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "timeout": 30,
+        "command": "python -c \"import json,sys,shutil,subprocess; p=json.load(sys.stdin).get('tool_input',{}).get('path',''); ok=p.endswith('.py') and shutil.which('ruff'); ok and subprocess.run(['ruff','format',p])\""
+      }
+    ]
+  }
+}

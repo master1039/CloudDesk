@@ -551,7 +551,7 @@ this file. Stage 17 is optional and is not a core exit criterion.
 | 6 | Tools and policy | validated locally |
 | 7 | Rules and guardrails | validated locally |
 | 8 | Specialist agents | validated locally |
-| 9 | Workflow graph and trace | not started |
+| 9 | Workflow graph and trace | in progress |
 | 10 | Approval and escalation | not started |
 | 11 | Memory | in progress |
 | 12 | Agent console | not started |

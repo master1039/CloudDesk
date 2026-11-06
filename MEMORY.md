@@ -135,6 +135,12 @@ Durable facts for this repository. `CLAUDE.md` wins if this file drifts. Update 
   duplicate IDs, invalid enums, missing knowledge references, unsupported grounding phrases, and
   policy expectations that disagree with the deterministic rule table. Phase 13 still owns metric
   calculation and threshold enforcement.
+- P10-1 establishes the workflow state/checkpoint foundation. `SupportState` is a partial `TypedDict`
+  containing ticket context and every typed specialist result. `completed_nodes` and `errors` append,
+  while `token_usage` and `estimated_cost` add without mutating prior values. `create_checkpointer`
+  selects `InMemorySaver` for `:memory:` and a lifecycle-managed `AsyncSqliteSaver` for file paths,
+  creates parent directories, initializes checkpoint tables, and uses an explicit CloudDesk type
+  allowlist for deserialization. SQLite checkpoints survive close/reopen and remain thread-scoped.
 - Image tags equal the git SHA once delivery exists. Nothing has been built or tagged yet.
 - Stage 17 (Agentic DevOps) is optional and depends on stages 13–16. It is outside core Project 1 completion.
 
@@ -239,15 +245,15 @@ Cases live in `datasets/eval_cases.json` and each case needs a valid `expected_c
 
 Update each row in place. Do not mark a row done from intention.
 
-| Surface | State on 2026-11-05 |
+| Surface | State on 2026-11-06 |
 |---|---|
-| Repository contents | Phases 1 through 8 and the pulled-forward memory track are present. Specialist work includes the strict workflow/fake-LLM foundation, all six bounded agents, and the initial evaluation corpus; the metric harness, graph integration, runnable frontend, containers, CI, and infrastructure are absent. |
-| Implemented | P1-1 through P9-8. The initial 16-case evaluation corpus covers every ticket category, knowledge article, and deterministic escalation rule class with explicit expected outcomes. |
-| Validated locally | 334 tests pass offline. P9-8 verifies unique bounded cases, valid category and severity enums, complete category and knowledge coverage, supported grounding phrases, and exact agreement with deterministic escalation policy. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. Phase 13 metrics were not calculated, and no live LLM, external service, graph node, or cloud service was exercised. |
+| Repository contents | Phases 1 through 8, the pulled-forward memory track, and the workflow state/checkpoint foundation are present. Graph nodes and wiring, the metric harness, runnable frontend, containers, CI, and infrastructure are absent. |
+| Implemented | P1-1 through P10-1. Typed partial workflow state now has append/add reducers plus in-memory and async SQLite checkpoint selection with explicit safe-type deserialization. |
+| Validated locally | 340 tests pass offline. P10-1 verifies non-mutating reducers, additive tokens/cost, thread-scoped in-memory persistence, SQLite persistence across close/reopen, typed result reconstruction, parent creation, and invalid-path rejection. Ruff checks pass across backend, `integrations`, `agents`, `rag`, `memory`, tests, and `main.py`. No graph node, workflow API, live LLM, external service, or cloud service was exercised. |
 | Cloud credentials | None used. |
 | Applied to a real account | Nothing. |
 | GitHub Actions | Workflow files are not in the repo. None have been executed. |
-| Phase plan | Phases 1 through 8 and P8-1 through P8-3 are validated locally. TASKS Phase 9 is complete through P9-8; workflow graph work is next. Original Phase 11 memory still awaits graph-node wiring. |
+| Phase plan | Phases 1 through 8 and P8-1 through P8-3 are validated locally. Workflow graph work is in progress with P10-1 complete; P10-2 through P10-6 remain pending. Original Phase 11 memory still awaits graph-node wiring. |
 
 ## Open questions from `CLAUDE.md` §20
 
